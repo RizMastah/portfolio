@@ -2,7 +2,7 @@
 
 Personal portfolio: Software Engineering student (UII × Nanjing Xiaozhuang University), focused on data engineering, AI/ML and backend.
 
-**Live:** https://raihanaditito-one.vercel.app
+**Live:** https://raihanab.vercel.app
 
 ## Stack
 
