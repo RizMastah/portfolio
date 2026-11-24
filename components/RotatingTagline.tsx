@@ -14,12 +14,9 @@ export function RotatingTagline({ items }: { items: readonly string[] }) {
   }, [items.length]);
 
   return (
-    <span className="inline-block">
-      [
-      <span key={index} className="tagline-enter inline-block">
-        {items[index]}
-      </span>
-      ]
+    // Brackets sit inside the animated box so they stay attached to the text when it wraps.
+    <span key={index} className="tagline-enter inline-block">
+      [{items[index]}]
     </span>
   );
 }
