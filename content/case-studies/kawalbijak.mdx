@@ -1,0 +1,52 @@
+## Problem
+
+Indonesian fiscal and monetary policy is published in jargon and national totals. Households have no simple way to see what a fuel-price change, VAT increase or school-meal program means for **their own monthly budget**, or whether official numbers match what people see on the ground.
+
+KawalBijak is a civic-tech platform that translates policy into **rupiah per month for your household profile**, then compares official figures with verified field reports from citizens.
+
+## My role
+
+I was **Backend Lead** in a team of three (team LaBuLaDa). I built:
+
+- the **Formula Engine**, which computes each policy's deterministic rupiah impact from a user's profile
+- the **Stats Engine**, which flags anomalous citizen reports with Z-score, IQR and geographic clustering
+- the **API routes**, including the 8-step verification pipeline
+- the **Groq integration** (Llama 3.3 70B), with guardrails and a public audit log
+
+## Architecture
+
+A Next.js 15 app on top of Supabase Postgres with Row Level Security on every table. Citizen reports pass through a fixed verification pipeline before they can influence any public number.
+
+<Flow
+  caption="Verify pipeline: every citizen report takes the same eight steps."
+  steps={[
+    { title: "1 · Auth check", detail: "Supabase session, 401 if missing", tone: "io" },
+    { title: "2 · Validate", detail: "Zod schema shared by client and server" },
+    { title: "3 · Deduplicate", detail: "one report per user per policy, 409 on repeat" },
+    { title: "4 · Insert as pending" },
+    { title: "5 · Stats Engine", detail: "Z-score + IQR + geo-cluster", tone: "ml" },
+    { title: "6 · AI plausibility", detail: "only when the Z-score is high", tone: "ml" },
+    { title: "7 · Update credibility", detail: "status becomes confirmed" },
+    { title: "8 · DB trigger", detail: "gap scores recalculated automatically", tone: "io" },
+  ]}
+/>
+
+The database has **9 PostgreSQL tables**, each with Row Level Security, and two triggers. One creates a profile on sign-up. The other recalculates regional gap scores whenever a verification changes.
+
+## Technical highlights
+
+- **Deterministic numbers only.** Every figure shown to the public comes from a formula or a standard statistical method. The LLM is limited to four text tasks: summarizing policy, giving personal advice, checking whether a report's text is plausible, and answering scoped Q&A.
+- **Credibility-weighted gap score.** Official budget figures are compared with citizen reports, and each report is weighted by its reporter's credibility.
+- **Statistics before AI.** The more expensive LLM plausibility check runs only when the Z-score marks a report as unusual.
+- **Auditable AI.** Every model call is logged with its prompt, parameters and output for public review.
+- **Database-level consistency.** Gap scores are recalculated by a Postgres trigger, so the API can't forget to update them.
+
+## Results
+
+- **2nd Place, Web Development** at TechSprint Innovation Cup 2026 (Codelab Indonesia).
+- Shipped versions **v0.1 to v0.3**: the Formula Engine with 7 demo policies, the Gap Score with the verify pipeline, and the AI Advisor with a what-if simulator and scoped Q&A.
+- Live at [kawalbijak.vercel.app](https://kawalbijak.vercel.app).
+
+## What I learned
+
+Keeping the LLM away from the numbers made the system much easier to defend in front of judges: every rupiah value can be traced to a formula. Next, I would add a choropleth map per province and macro context (exchange rate, inflation) before opening a public API.

@@ -1,0 +1,55 @@
+## Problem
+
+Studying usually takes three tools: a solver for the problem you're stuck on, a flashcard app, and a timer. Solvers forget the problem once you close them, flashcard apps need every card typed by hand, and timers don't know what you studied.
+
+StudyLens covers all three from **one camera workflow**, with everything stored under one account.
+
+## My role
+
+**Solo project**, the final project for iOS Application Development at Nanjing Xiaozhuang University (June–July 2026). I built the app, the math recognition pipeline and the solver, and **trained the on-device symbol classifier**.
+
+## Architecture
+
+<Flow
+  caption="Math pipeline. In auto-detect mode, a result is shown only after three consecutive frames agree."
+  steps={[
+    { title: "Camera frame", detail: "every 10th frame in auto-detect mode", tone: "io" },
+    { title: "Symbol segmentation", detail: "split into single-symbol regions" },
+    { title: "Core ML classifier", detail: "34 classes, drops confidence ≤ 0.75", tone: "ml" },
+    { title: "Expression parser", detail: "rebuilds the equation, detects its type" },
+    { title: "Math solver", detail: "numbered steps, computed locally", tone: "io" },
+  ]}
+/>
+
+The app follows MVVM with a service layer. It uses Swift actors for Firestore access, and each user's data is nested under their own document, so one security rule covers every collection.
+
+### Symbol classifier
+
+<Facts
+  rows={[
+    ["Model", "Image classifier trained with Create ML"],
+    [
+      "Classes",
+      "34: digits, variables, operators, brackets, sqrt, log, trig functions, inequalities, π, θ",
+    ],
+    ["Data", "About 60,000 images from two public Kaggle datasets, preprocessed with Python"],
+    ["Accuracy", "86% training · 87% validation · 80% held-out test"],
+  ]}
+/>
+
+## Technical highlights
+
+- **Stable live recognition.** Three agreeing frames plus a two-second cooldown filter out one-off misreads.
+- **Local, explainable solving.** Linear equations and inequalities, quadratics, simple derivatives, roots, logarithms and trigonometry, each solved in numbered steps. An LLM can optionally rewrite the steps in plain language.
+- **Notes to flashcards.** Page detection and Apple Vision text recognition, then up to eight question-and-answer cards from Llama 3.3 70B. You review the cards before saving, and they're scheduled with a simplified SM-2 spaced repetition.
+- **Accounts and sync.** Google Sign-In and email/password via Firebase Authentication, with sessions stored in Cloud Firestore.
+
+## Results
+
+- Classifier accuracy of **87% on validation** and **80% on a held-out test set**.
+- **27 unit tests** for the expression parser and the math solver.
+- A complete study loop: scan, solve, review flashcards, track sessions and streaks.
+
+## What I learned
+
+The gap between validation (87%) and test (80%) came from training on clean, cropped symbols but predicting on symbols segmented from live camera frames. That domain gap was the main lesson. The final build therefore made Apple Vision text recognition the primary path, with the Core ML classifier as a fallback, and replaced `NSExpression` with a recursive-descent evaluator that fails safely on malformed input.

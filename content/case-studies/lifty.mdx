@@ -1,0 +1,62 @@
+## Problem
+
+Workout apps either plan your session or watch you do it, rarely both. Without a coach, beginners don't know whether a squat is deep enough or their torso is leaning, and fixed weekly plans ignore how tired you are today.
+
+Lifty is an iOS coach that plans the day's session **and** turns the front camera into a form coach that counts reps, scores each one and talks you through the set.
+
+## My role
+
+**Solo project** for the iOS Application Development course at Nanjing Xiaozhuang University (June 2026). I built the app end to end and **trained the squat-form model myself in PyTorch**, then converted it to Core ML.
+
+## Architecture
+
+Everything that touches the camera runs on the phone. Apple Vision finds the body joints. A rule engine reads joint angles to count reps, while a small sequence model classifies squat form from the last 60 frames.
+
+<Flow
+  caption="From camera frame to feedback. Frames stay in memory and are never saved or uploaded."
+  steps={[
+    { title: "Front camera", detail: "AVCaptureSession, late frames dropped", tone: "io" },
+    { title: "Apple Vision", detail: "VNDetectHumanBodyPoseRequest, 18 joints" },
+    { title: "Rolling window", detail: "last 60 frames, predict every 6th", tone: "ml" },
+    { title: "FlexFitClassifier", detail: "Core ML, 5 classes", tone: "ml" },
+    { title: "Smoothing", detail: "confidence-weighted vote over the last 5", tone: "ml" },
+    { title: "Feedback", detail: "skeleton, reps, form %, spoken cues", tone: "io" },
+  ]}
+/>
+
+### The squat-form model
+
+<Facts
+  rows={[
+    [
+      "Input",
+      "60 frames × 18 joints × (x, y, confidence), the exact layout of Vision's keypoints array",
+    ],
+    [
+      "Normalisation",
+      "Built into the model: joints re-centred on the hip, so it sees movement relative to the body",
+    ],
+    ["Architecture", "Conv1D (64 filters, k = 3) → 2 × LSTM (64) → Dense 32 → Dense 5"],
+    ["Size", "~79K parameters, ~320 KB"],
+    ["Classes", "correct squat, torso lean, too shallow, none, other"],
+    ["Toolchain", "PyTorch → TorchScript → coremltools"],
+  ]}
+/>
+
+## Technical highlights
+
+- **Temporal model, not a single frame.** Form problems such as torso lean only show up over time, so the classifier reads a 60-frame sequence. Hip-centred normalisation makes it independent of where you stand.
+- **Geometry rules for counting.** A squat rep counts when the knee angle reaches 110° or less and comes back to at least 160°, at most once every 0.5 s. Counting starts only after setup stays at 85% or higher for two seconds.
+- **Explainable daily plan.** A rule-based engine scores candidate sessions by calorie fit, duration, intensity, novelty and equipment, applies a safety penalty, and explains its choice in plain language.
+- **Camera work off the main thread.** Capture and analysis run on their own queues, and only published results reach SwiftUI.
+- **Grounded coach chat.** Llama 3.3 70B on Groq receives a short summary of your profile and week, never your raw history.
+
+## Results
+
+- A working on-device form coach for squats, push-ups and planks, with spoken cues at four levels.
+- **41 XCTest unit tests** covering the rep geometry, calibration, recommendation engine and chat context.
+- A **320 KB** Core ML model that runs live on the phone.
+
+## What I learned
+
+Combining simple geometry rules with a small learned model worked better than either alone: the rules are reliable for counting, and the model catches subtler form faults. Next, I would train models for push-ups and planks the same way, and move the chat key behind a small backend proxy for a real release.

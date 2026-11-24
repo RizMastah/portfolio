@@ -1,0 +1,64 @@
+## Problem
+
+Small businesses often track orders in chats and spreadsheets, so stock, payment status and notifications drift apart. Someone pays, but the stock isn't reduced, or an order is processed before its payment is confirmed.
+
+NexaOrder is a web-based order management system. Admins manage products, stock, orders, payments and reports. Customers browse, order, pay and follow each order to completion.
+
+## My role
+
+**Solo project**, built in June 2026. I designed the domain model, the eight-table database and the service layer, and organised the code so each design pattern is easy to find and read.
+
+## Architecture
+
+Controllers stay thin, services hold the business rules, and **every status change goes through one place**. That way stock, notifications and payments can't drift out of sync.
+
+<Flow
+  direction="row"
+  caption="Request path, from browser to database."
+  steps={[
+    { title: "Browser", tone: "io" },
+    { title: "AuthInterceptor", detail: "session + role check" },
+    { title: "Controllers", detail: "11 classes, DTO input" },
+    { title: "Services", detail: "business rules" },
+    { title: "Patterns", detail: "payment · state · observer", tone: "ml" },
+    { title: "Repositories", detail: "project-owned interfaces" },
+    { title: "MySQL", detail: "8 tables", tone: "io" },
+  ]}
+/>
+
+### Order lifecycle
+
+<Flow
+  direction="row"
+  caption="Each status is its own State class and allows only its own transitions. CANCELLED is reachable only from PENDING."
+  steps={[
+    { title: "PENDING", tone: "io" },
+    { title: "PAID", detail: "payment succeeds" },
+    { title: "PROCESSING", detail: "admin starts" },
+    { title: "COMPLETED", tone: "io" },
+  ]}
+/>
+
+## Technical highlights
+
+| Pattern                       | Where it's used                                                                                                                   |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| **State**                     | `PendingState` … `CancelledState`. Illegal transitions throw, so an order can't jump from PENDING to COMPLETED                    |
+| **Strategy + Factory Method** | One class per payment method (e-wallet, bank transfer, cash on delivery), built by `PaymentFactory`                               |
+| **Observer**                  | When an order becomes PAID, `InventoryObserver` reduces stock and logs it, and `NotificationObserver` informs customer and admins |
+| **Repository**                | Project-owned interfaces, with Spring Data hidden behind adapters                                                                 |
+| **DTO**                       | 14 request/response classes, so views never receive entities                                                                      |
+| **MVC, Singleton**            | Thin controllers with Thymeleaf views; single factories and invoice-number generator                                              |
+
+- **Hand-wired patterns.** Observers and factories are registered explicitly instead of through Spring's auto-discovery, so the design stays visible in the code.
+- **Payment method decides the flow.** E-wallet is paid at once, bank transfer waits for admin confirmation, and cash on delivery is collected on delivery.
+- **Reports.** Monthly filters, three Chart.js charts and CSV export.
+
+## Results
+
+- A complete admin and customer flow: products with image upload, inventory log, order lifecycle, payments, reports, notifications and printable invoices.
+- **8 design patterns**, **8 MySQL tables** and **11 controllers**, organised for readability.
+
+## What I learned
+
+Putting every status change behind one State machine plus Observers removed a whole class of consistency bugs. For a real deployment, I would add BCrypt and Spring Security (passwords are not hashed yet), a real payment gateway, and service-level tests for the state rules and payment strategies.
