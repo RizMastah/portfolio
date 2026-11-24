@@ -1,11 +1,10 @@
 @import "tailwindcss";
 
 /* ── Color tokens ─────────────────────────────────────────────
-   Dark "Lab" palette is the default. The inline script in layout.tsx sets
-   data-palette (by Nanjing hour, or the visitor's pick) and data-theme
-   before first paint; these blocks override the same tokens. */
-:root,
-[data-palette="lab"] {
+   Two modes only: dark (default) and light. The inline script from
+   lib/theme.ts sets data-theme from the visitor's saved choice before first
+   paint, so there is no flash. Keep the hex values in sync with lib/theme.ts. */
+:root {
   --bg: #0c0f10;
   --bg-raised: #131819;
   --fg: #e6ebe8;
@@ -14,36 +13,6 @@
   --accent: #3ddc97;
   --accent-fg: #06140e;
   color-scheme: dark;
-}
-
-[data-palette="morning"] {
-  --bg: #0c1118;
-  --bg-raised: #131a24;
-  --fg: #e8ecf2;
-  --muted: #8f99a8;
-  --line: #232d3b;
-  --accent: #f5c542;
-  --accent-fg: #1a1400;
-}
-
-[data-palette="evening"] {
-  --bg: #120e0c;
-  --bg-raised: #1b1512;
-  --fg: #f1e9e4;
-  --muted: #a3958c;
-  --line: #34291f;
-  --accent: #ff8a3d;
-  --accent-fg: #1a0b02;
-}
-
-[data-palette="night"] {
-  --bg: #07060b;
-  --bg-raised: #110f18;
-  --fg: #e9e6f2;
-  --muted: #918ba6;
-  --line: #231f31;
-  --accent: #a493ff;
-  --accent-fg: #0d0820;
 }
 
 [data-theme="light"] {
@@ -72,7 +41,7 @@ body {
   --color-line: var(--line);
   --color-accent: var(--accent);
   --color-accent-fg: var(--accent-fg);
-  --font-display: var(--font-anton);
+  --font-display: var(--font-big-shoulders);
   --font-sans: var(--font-instrument);
   --font-mono: var(--font-jetbrains);
 }
@@ -104,8 +73,9 @@ body {
 @utility display {
   font-family: var(--font-display), Impact, sans-serif;
   text-transform: uppercase;
-  line-height: 0.85;
-  letter-spacing: -0.005em;
+  font-weight: 900;
+  line-height: 0.86;
+  letter-spacing: -0.01em;
 }
 
 @utility text-outline {
@@ -126,18 +96,28 @@ body {
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Per-character reveal: each char rises out of a clipped line, staggered 0.05 s. */
+/* Per-character reveal: each char rises out of a clipped line, staggered 0.05 s.
+   The display leading (0.85) is tighter than the letters themselves, so the
+   clip box is stretched 0.15em upward (padding) and pulled back into place
+   (negative margin). Without this, the tops of S, G, O and the outline
+   strokes of T and A were cut off flat. */
 .chars-line {
   display: block;
   overflow: hidden;
+  padding-top: 0.15em;
+  margin-top: -0.15em;
   padding-bottom: 0.04em;
+}
+/* Words never break apart: lines wrap only at real spaces between words. */
+.word {
+  display: inline-block;
+  white-space: nowrap;
 }
 .char {
   display: inline-block;
-  white-space: pre;
 }
 .js .char {
-  transform: translateY(105%);
+  transform: translateY(125%);
   animation: char-up 0.9s var(--ease-out) forwards;
   animation-delay: calc(0.15s + var(--i) * 0.05s);
 }

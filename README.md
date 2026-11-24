@@ -41,7 +41,7 @@ npm run test:e2e     # Playwright smoke tests (desktop + mobile)
 
 ## Notes
 
-- Time-of-day palettes follow Nanjing time (Asia/Shanghai) and can be overridden in the footer. Light mode is a separate toggle.
+- Two color modes: dark (default) and light, switched in the footer and remembered per visitor.
 - Type `sql` anywhere on the page for the easter egg.
 - Design reference analysis (patterns only): `docs/reference-notes.md`. Product requirements: `PRD-portfolio-raihan.md`.
 - Set `NEXT_PUBLIC_SITE_URL` in Vercel if a custom domain is added; otherwise the Vercel production URL is used for metadata and the sitemap.

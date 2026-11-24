@@ -26,6 +26,7 @@
     "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
+    "@napi-rs/canvas": "^1.2.0",
     "@playwright/test": "^1.65.1",
     "@tailwindcss/turbopack": "4.3.3",
     "@types/node": "^20",
@@ -33,6 +34,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
+    "pdfjs-dist": "^6.5.438",
     "prettier": "^3.10.1",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "4.3.3",

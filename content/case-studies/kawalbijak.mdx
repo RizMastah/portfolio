@@ -8,7 +8,7 @@ KawalBijak is a civic-tech platform that translates policy into **rupiah per mon
 
 I was **Backend Lead** in a team of three (team LaBuLaDa). I built:
 
-- the **Formula Engine**, which computes each policy's deterministic rupiah impact from a user's profile
+- the **Formula Engine**, which computes each policy’s deterministic rupiah impact from a user’s profile
 - the **Stats Engine**, which flags anomalous citizen reports with Z-score, IQR and geographic clustering
 - the **API routes**, including the 8-step verification pipeline
 - the **Groq integration** (Llama 3.3 70B), with guardrails and a public audit log
@@ -35,11 +35,11 @@ The database has **9 PostgreSQL tables**, each with Row Level Security, and two 
 
 ## Technical highlights
 
-- **Deterministic numbers only.** Every figure shown to the public comes from a formula or a standard statistical method. The LLM is limited to four text tasks: summarizing policy, giving personal advice, checking whether a report's text is plausible, and answering scoped Q&A.
-- **Credibility-weighted gap score.** Official budget figures are compared with citizen reports, and each report is weighted by its reporter's credibility.
+- **Deterministic numbers only.** Every figure shown to the public comes from a formula or a standard statistical method. The LLM is limited to four text tasks: summarizing policy, giving personal advice, checking whether a report’s text is plausible, and answering scoped Q&A.
+- **Credibility-weighted gap score.** Official budget figures are compared with citizen reports, and each report is weighted by its reporter’s credibility.
 - **Statistics before AI.** The more expensive LLM plausibility check runs only when the Z-score marks a report as unusual.
 - **Auditable AI.** Every model call is logged with its prompt, parameters and output for public review.
-- **Database-level consistency.** Gap scores are recalculated by a Postgres trigger, so the API can't forget to update them.
+- **Database-level consistency.** Gap scores are recalculated by a Postgres trigger, so the API can’t forget to update them.
 
 ## Results
 

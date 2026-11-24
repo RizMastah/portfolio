@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { education, experience, languages, organizations, profile } from "@/content/profile";
 import { Section } from "./Section";
 
@@ -14,10 +15,21 @@ export function About() {
   return (
     <Section id="about" index="03" title="About" aside="2+2 · Indonesia ⇄ China">
       <div className="grid gap-14 md:grid-cols-12">
-        <p className="text-2xl leading-snug md:col-span-7 md:text-3xl">
-          {profile.intro} I care about clean data models, measurable results, and shipping things
-          that actually run.
-        </p>
+        <div className="grid gap-5 text-2xl leading-snug md:col-span-8 md:text-3xl">
+          {profile.about.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
+        </div>
+        <div className="md:col-span-4">
+          <Image
+            src={profile.photo.src}
+            width={profile.photo.width}
+            height={profile.photo.height}
+            alt={`Portrait of ${profile.name}`}
+            sizes="(min-width: 768px) 30vw, 100vw"
+            className="border-line aspect-square w-full max-w-sm rounded-lg border object-cover"
+          />
+        </div>
 
         <div className="grid gap-12 md:col-span-12 md:grid-cols-2 lg:grid-cols-4">
           <Block title="Education">

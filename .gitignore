@@ -48,3 +48,6 @@ next-env.d.ts
 
 # local claude preview config
 /.claude/
+
+# local screenshots
+/screenshots/

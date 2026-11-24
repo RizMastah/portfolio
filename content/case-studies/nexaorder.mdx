@@ -1,6 +1,6 @@
 ## Problem
 
-Small businesses often track orders in chats and spreadsheets, so stock, payment status and notifications drift apart. Someone pays, but the stock isn't reduced, or an order is processed before its payment is confirmed.
+Small businesses often track orders in chats and spreadsheets, so stock, payment status and notifications drift apart. Someone pays, but the stock isn’t reduced, or an order is processed before its payment is confirmed.
 
 NexaOrder is a web-based order management system. Admins manage products, stock, orders, payments and reports. Customers browse, order, pay and follow each order to completion.
 
@@ -10,7 +10,7 @@ NexaOrder is a web-based order management system. Admins manage products, stock,
 
 ## Architecture
 
-Controllers stay thin, services hold the business rules, and **every status change goes through one place**. That way stock, notifications and payments can't drift out of sync.
+Controllers stay thin, services hold the business rules, and **every status change goes through one place**. That way stock, notifications and payments can’t drift out of sync.
 
 <Flow
   direction="row"
@@ -41,16 +41,16 @@ Controllers stay thin, services hold the business rules, and **every status chan
 
 ## Technical highlights
 
-| Pattern                       | Where it's used                                                                                                                   |
+| Pattern                       | Where it’s used                                                                                                                   |
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| **State**                     | `PendingState` … `CancelledState`. Illegal transitions throw, so an order can't jump from PENDING to COMPLETED                    |
+| **State**                     | `PendingState` … `CancelledState`. Illegal transitions throw, so an order can’t jump from PENDING to COMPLETED                    |
 | **Strategy + Factory Method** | One class per payment method (e-wallet, bank transfer, cash on delivery), built by `PaymentFactory`                               |
 | **Observer**                  | When an order becomes PAID, `InventoryObserver` reduces stock and logs it, and `NotificationObserver` informs customer and admins |
 | **Repository**                | Project-owned interfaces, with Spring Data hidden behind adapters                                                                 |
 | **DTO**                       | 14 request/response classes, so views never receive entities                                                                      |
 | **MVC, Singleton**            | Thin controllers with Thymeleaf views; single factories and invoice-number generator                                              |
 
-- **Hand-wired patterns.** Observers and factories are registered explicitly instead of through Spring's auto-discovery, so the design stays visible in the code.
+- **Hand-wired patterns.** Observers and factories are registered explicitly instead of through Spring’s auto-discovery, so the design stays visible in the code.
 - **Payment method decides the flow.** E-wallet is paid at once, bank transfer waits for admin confirmation, and cash on delivery is collected on delivery.
 - **Reports.** Monthly filters, three Chart.js charts and CSV export.
 

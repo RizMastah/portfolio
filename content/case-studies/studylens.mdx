@@ -1,6 +1,6 @@
 ## Problem
 
-Studying usually takes three tools: a solver for the problem you're stuck on, a flashcard app, and a timer. Solvers forget the problem once you close them, flashcard apps need every card typed by hand, and timers don't know what you studied.
+Studying usually takes three tools: a solver for the problem you’re stuck on, a flashcard app, and a timer. Solvers forget the problem once you close them, flashcard apps need every card typed by hand, and timers don’t know what you studied.
 
 StudyLens covers all three from **one camera workflow**, with everything stored under one account.
 
@@ -21,7 +21,7 @@ StudyLens covers all three from **one camera workflow**, with everything stored 
   ]}
 />
 
-The app follows MVVM with a service layer. It uses Swift actors for Firestore access, and each user's data is nested under their own document, so one security rule covers every collection.
+The app follows MVVM with a service layer. It uses Swift actors for Firestore access, and each user’s data is nested under their own document, so one security rule covers every collection.
 
 ### Symbol classifier
 
@@ -41,7 +41,7 @@ The app follows MVVM with a service layer. It uses Swift actors for Firestore ac
 
 - **Stable live recognition.** Three agreeing frames plus a two-second cooldown filter out one-off misreads.
 - **Local, explainable solving.** Linear equations and inequalities, quadratics, simple derivatives, roots, logarithms and trigonometry, each solved in numbered steps. An LLM can optionally rewrite the steps in plain language.
-- **Notes to flashcards.** Page detection and Apple Vision text recognition, then up to eight question-and-answer cards from Llama 3.3 70B. You review the cards before saving, and they're scheduled with a simplified SM-2 spaced repetition.
+- **Notes to flashcards.** Page detection and Apple Vision text recognition, then up to eight question-and-answer cards from Llama 3.3 70B. You review the cards before saving, and they’re scheduled with a simplified SM-2 spaced repetition.
 - **Accounts and sync.** Google Sign-In and email/password via Firebase Authentication, with sessions stored in Cloud Firestore.
 
 ## Results

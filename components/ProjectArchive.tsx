@@ -2,36 +2,39 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import type { Project, ProjectCategory } from "@/content/projects";
+import { type Project, type ProjectType, describeMyRole, projectTypes } from "@/content/projects";
+import { CoverFrame } from "./CoverFrame";
+import { LightboxLink } from "./Lightbox";
 
-const categories: ("All" | ProjectCategory)[] = [
-  "All",
-  "Data & ML",
-  "Backend",
-  "Mobile",
-  "Web",
-  "UI/UX",
-  "Other",
-];
+type Filter = "All" | ProjectType;
+type Sort = "semester" | "type";
 
-type Sort = "semester" | "category";
+const linkLabels: Record<string, string> = {
+  repo: "repo",
+  live: "live site",
+  figma: "figma prototype",
+  video: "video",
+  demo: "demo",
+};
 
 function groupLabel(p: Project) {
   if (p.semester == null) return p.campus ? `Earlier work · ${p.campus}` : "Earlier work";
+  // 2+2 double degree: semesters 1–4 at UII, 5 onwards at NXU.
   const campus = p.semester >= 5 ? "NXU" : "UII";
   return `Semester ${p.semester} · ${campus}`;
 }
 
 function Row({ p }: { p: Project }) {
-  const meta = [p.period, p.role, p.team && p.team > 1 ? `team of ${p.team}` : null]
-    .filter(Boolean)
-    .join(" · ");
+  const meta = [p.typeLabel, p.period, p.course].filter(Boolean).join(" · ");
   const links = Object.entries(p.links ?? {}).filter(([, v]) => v) as [string, string][];
 
   return (
-    <li className="border-line grid gap-3 border-b py-6 md:grid-cols-12 md:gap-6">
-      <div className="md:col-span-4">
-        <h3 className="display text-3xl md:text-4xl">
+    <li className="border-line grid gap-4 border-b py-6 md:grid-cols-12 md:gap-6">
+      <div className="max-w-64 md:col-span-2 md:max-w-none">
+        <CoverFrame project={p} sizes="(min-width: 768px) 16vw, 256px" />
+      </div>
+      <div className="md:col-span-3">
+        <h3 className="display text-3xl md:text-4xl" translate="no">
           {p.featured ? (
             <Link href={`/work/${p.slug}`} className="hover:text-accent transition-colors">
               {p.title} <span className="label align-middle">→ case study</span>
@@ -44,6 +47,9 @@ function Row({ p }: { p: Project }) {
       </div>
       <div className="md:col-span-5">
         <p className="leading-relaxed">{p.oneLiner}</p>
+        <p className="mt-3 text-sm leading-relaxed">
+          <span className="label text-muted">My role</span> {describeMyRole(p)}
+        </p>
         {p.award ? <p className="label text-accent mt-2">★ {p.award}</p> : null}
         {p.stack.length ? (
           <ul className="mt-3 flex flex-wrap gap-2" aria-label="Tech stack">
@@ -55,7 +61,7 @@ function Row({ p }: { p: Project }) {
           </ul>
         ) : null}
       </div>
-      <ul className="flex flex-wrap gap-x-4 gap-y-1 md:col-span-3 md:justify-end">
+      <ul className="flex flex-wrap gap-x-4 gap-y-1 md:col-span-2 md:flex-col md:items-end">
         {links.map(([kind, href]) => (
           <li key={kind}>
             <a
@@ -64,68 +70,75 @@ function Row({ p }: { p: Project }) {
               rel="noreferrer"
               className="label hover:text-accent transition-colors"
             >
-              {kind} ↗
+              {linkLabels[kind] ?? kind} ↗<span className="sr-only"> (opens in a new tab)</span>
             </a>
           </li>
         ))}
+        {p.poster ? (
+          <li>
+            <LightboxLink
+              item={{ ...p.poster, alt: `${p.title} poster` }}
+              label="View poster"
+            />
+          </li>
+        ) : null}
       </ul>
     </li>
   );
 }
 
 export function ProjectArchive({ projects }: { projects: Project[] }) {
-  const [filter, setFilter] = useState<(typeof categories)[number]>("All");
+  const [filter, setFilter] = useState<Filter>("All");
   const [sort, setSort] = useState<Sort>("semester");
 
   const groups = useMemo(() => {
-    const visible = projects.filter((p) => filter === "All" || p.category.includes(filter));
+    const visible = projects.filter((p) => filter === "All" || p.type === filter);
     const map = new Map<string, Project[]>();
     if (sort === "semester") {
       const sorted = [...visible].sort((a, b) => (b.semester ?? -1) - (a.semester ?? -1));
       for (const p of sorted) map.set(groupLabel(p), [...(map.get(groupLabel(p)) ?? []), p]);
     } else {
-      for (const c of categories.slice(1)) {
-        const items = visible.filter((p) => p.category[0] === c);
-        if (items.length) map.set(c, items);
+      for (const t of projectTypes) {
+        const items = visible
+          .filter((p) => p.type === t)
+          .sort((a, b) => (b.semester ?? -1) - (a.semester ?? -1));
+        if (items.length) map.set(t, items);
       }
     }
     return [...map.entries()];
   }, [projects, filter, sort]);
 
-  const counts = useMemo(
-    () =>
-      Object.fromEntries(
-        categories.map((c) => [
-          c,
-          c === "All" ? projects.length : projects.filter((p) => p.category.includes(c)).length,
-        ]),
-      ),
-    [projects],
-  );
+  const counts = useMemo(() => {
+    const c: Record<string, number> = { All: projects.length };
+    for (const t of projectTypes) c[t] = projects.filter((p) => p.type === t).length;
+    return c;
+  }, [projects]);
+
+  const filters: Filter[] = ["All", ...projectTypes];
 
   return (
     <div>
       <div className="border-line mb-10 flex flex-col gap-4 border-y py-4 md:flex-row md:items-center md:justify-between">
-        <div role="group" aria-label="Filter by category" className="flex flex-wrap gap-2">
-          {categories
-            .filter((c) => counts[c] > 0)
-            .map((c) => (
+        <div role="group" aria-label="Filter by project type" className="flex flex-wrap gap-2">
+          {filters
+            .filter((f) => counts[f] > 0)
+            .map((f) => (
               <button
-                key={c}
+                key={f}
                 type="button"
-                aria-pressed={filter === c}
-                onClick={() => setFilter(c)}
+                aria-pressed={filter === f}
+                onClick={() => setFilter(f)}
                 className={`label rounded-full border px-3 py-1.5 transition-colors ${
-                  filter === c ? "bg-fg text-bg border-fg" : "border-line text-muted hover:text-fg"
+                  filter === f ? "bg-fg text-bg border-fg" : "border-line text-muted hover:text-fg"
                 }`}
               >
-                {c} <span>{counts[c]}</span>
+                {f} <span>{counts[f]}</span>
               </button>
             ))}
         </div>
         <div role="group" aria-label="Sort" className="label flex items-center gap-3">
           <span className="text-muted">Sort:</span>
-          {(["semester", "category"] as const).map((s) => (
+          {(["semester", "type"] as const).map((s) => (
             <button
               key={s}
               type="button"
@@ -142,7 +155,7 @@ export function ProjectArchive({ projects }: { projects: Project[] }) {
       </div>
 
       {groups.length === 0 ? (
-        <p className="text-muted">No projects in this category yet.</p>
+        <p className="text-muted">No projects of this type yet.</p>
       ) : (
         groups.map(([label, items]) => (
           <section key={label} className="mb-14" aria-label={label}>

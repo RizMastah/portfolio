@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { profile } from "@/content/profile";
 import { container } from "./Section";
 
@@ -13,6 +13,15 @@ const nav = [
 
 export function Header() {
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
 
   return (
     <header className="border-line/60 bg-bg/80 fixed inset-x-0 top-0 z-50 border-b backdrop-blur-md">

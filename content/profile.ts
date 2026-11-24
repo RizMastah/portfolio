@@ -9,10 +9,15 @@ export const profile = {
     "Software Engineering student.",
     "Data & AI/ML builder.",
     "Backend lead, 2nd place at TechSprint 2026.",
-    // Playful tagline: [OWNER DATA]
+    "Hidup tenang, bebas nafas, nasi padang, kopi panas.",
   ],
   intro:
     "Software Engineering student on a 2+2 double degree between Indonesia and China. I train models, design databases, and build the backends that connect them.",
+  /** About section: built only from confirmed facts (PRD §6.5–6.7, case studies). */
+  about: [
+    "I started Informatics at Universitas Islam Indonesia in 2023 and moved to Nanjing Xiaozhuang University in 2025 for the Software Engineering half of a 2+2 double degree.",
+    "Along the way I graded and prepared material as a teaching assistant, led the backend of the team that took 2nd place at TechSprint Innovation Cup 2026, and trained my own on-device models for two iOS apps.",
+  ],
   status: "Open to opportunities",
   info: [
     { label: "Role", value: "Software Engineering student · Data, AI/ML & Backend" },
@@ -28,7 +33,10 @@ export const profile = {
     email: "raihanaditito@gmail.com",
     linkedin: "https://www.linkedin.com/in/raihan-aditito",
     github: "https://github.com/RizMastah",
+    instagram: "https://instagram.com/raihan_aditito",
   },
+  /** Profile photo for the About section (from the owner's old portfolio). */
+  photo: { src: "/profile-raihan.webp", width: 900, height: 900 },
   cvPath: "/cv",
   footerLine: "Hand-built between Tangerang and Nanjing.",
 } as const;
@@ -44,7 +52,7 @@ export const education = [
   {
     school: "Universitas Islam Indonesia (UII)",
     place: "Yogyakarta, Indonesia",
-    degree: "Software Engineering",
+    degree: "Informatics, International Program (double degree)",
     period: "Sep 2023 – 2025",
     gpa: "3.84 / 4.00",
   },

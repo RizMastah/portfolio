@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CoverFrame } from "@/components/CoverFrame";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
-import { ProjectMockup } from "@/components/ProjectMockup";
+import { LightboxGallery } from "@/components/Lightbox";
 import { container } from "@/components/Section";
-import { featuredProjects } from "@/content/projects";
+import { describeMyRole, featuredProjects } from "@/content/projects";
 
 // All slugs are prerendered by generateStaticParams; unknown slugs block, then 404.
 export const instant = false;
@@ -39,8 +40,8 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
   const next = featuredProjects[(index + 1) % featuredProjects.length];
 
   const meta: [string, string | undefined][] = [
+    ["Type", project.typeLabel],
     ["Year", project.period || undefined],
-    ["Role", project.role],
     ["Team", project.team ? (project.team === 1 ? "Solo" : `${project.team} people`) : undefined],
     ["Context", project.course],
     ["Stack", project.stack.join(", ")],
@@ -59,6 +60,9 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
             <h1 className="display mt-8 text-[clamp(4rem,16vw,15rem)]">{project.title}</h1>
             <p className="mt-6 max-w-3xl text-xl leading-relaxed md:text-2xl">{project.oneLiner}</p>
             {project.award ? <p className="label text-accent mt-4">★ {project.award}</p> : null}
+            <p className="mt-6 max-w-3xl leading-relaxed">
+              <span className="label text-muted">My role</span> {describeMyRole(project)}
+            </p>
 
             <dl className="border-line mt-12 grid gap-6 border-t pt-6 sm:grid-cols-2 lg:grid-cols-5">
               {meta
@@ -87,16 +91,23 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
               </ul>
             ) : null}
 
-            <div className="border-line mt-14 aspect-[8/5] overflow-hidden rounded-lg border md:aspect-[16/7]">
-              <ProjectMockup project={project} index={index} />
-            </div>
+            <CoverFrame project={project} sizes="100vw" priority className="mt-14" />
           </header>
 
           <div className={`${container} grid py-20 md:grid-cols-12`}>
-            <div className="min-w-0 md:col-span-8 md:col-start-3">
+            <div className="max-w-[66ch] min-w-0 md:col-span-8 md:col-start-3">
               <Content />
             </div>
           </div>
+
+          {project.gallery?.length ? (
+            <section aria-labelledby="screens-title" className={`${container} pb-20`}>
+              <h2 id="screens-title" className="label text-muted mb-6">
+                Screenshots
+              </h2>
+              <LightboxGallery items={project.gallery} phone={project.mockupFrame === "ios"} />
+            </section>
+          ) : null}
         </article>
 
         <nav aria-label="Next project" className="border-line border-t">

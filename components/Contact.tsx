@@ -6,6 +6,7 @@ export function Contact() {
   const links = [
     { href: profile.contact.linkedin, label: "LinkedIn" },
     { href: profile.contact.github, label: "GitHub" },
+    { href: profile.contact.instagram, label: "Instagram" },
     { href: profile.cvPath, label: "CV (PDF)" },
   ];
 
@@ -21,7 +22,7 @@ export function Contact() {
           {profile.status}
         </p>
         <h2 id="contact-title" className="display text-[clamp(3.5rem,12vw,12rem)]">
-          <span className="block">Let&apos;s build</span>
+          <span className="block">Let’s build</span>
           <span className="text-outline block">with data</span>
         </h2>
         <p className="label text-muted mt-6">[models, databases, and the backends between them]</p>

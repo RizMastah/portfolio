@@ -1,12 +1,34 @@
 # PRD: Personal Portfolio Website — Raihan Aditito Bagastama
 
-**Version:** 1.1 (24 November 2026)
+**Version:** 1.6 (24 November 2026)
 **Owner:** Raihan Aditito Bagastama (GitHub: RizMastah)
 **Built with:** Claude Code
 **Deployment:** Vercel
 **Design reference:** https://yeahright.co/ (Tom Barrow's portfolio), analyzed in depth with REA (https://github.com/morluto/rea)
 
 ### Changelog
+
+- **1.6 (24 Nov 2026): project data restructured.**
+  - Each project now has two separate facts, so the archive is consistent:
+    - **type**, what the project is (Web, Mobile, Desktop, UI/UX, Animation, Other). The `/work` filter uses it.
+    - **myRole**, what Raihan did in it, shown on every project.
+  - UII projects completed with the owner's answers and the old portfolio (github.com/23523082/web-dev-xiong): semesters, types, links, and descriptions taken from the project READMEs and posters.
+  - Project posters from the old portfolio are used as covers.
+  - Education fixed: UII is **Informatics**, NXU is Software Engineering.
+  - Added the Instagram link and a profile photo in About.
+
+- **1.5 (24 Nov 2026):**
+  - The owner preferred the v1.2 design. The v1.3/1.4 redesign was set aside, and is kept in a git stash ("Redesign v1.3 + v1.4 middle path").
+  - Bug fixes kept on top of v1.2:
+    - The hero name wraps only between words and never mid-word on phones.
+    - Letter tops are no longer clipped by the reveal mask.
+    - A skip link to `#main` on every page.
+    - Case-study text capped at about 66 characters per line.
+    - Curly apostrophes.
+    - Esc closes the mobile menu.
+    - About uses confirmed facts instead of repeating the hero intro.
+  - Colors simplified to **two modes: dark (default) and light**. The time-of-day palettes are removed.
+  - The giant "RAIHAN." wordmark in the footer is removed (owner's choice).
 
 - **1.2 (24 Nov 2026):**
   - Typography direction set to "bold but controlled".
@@ -177,7 +199,7 @@ All content is supplied by the owner. Items marked **[OWNER DATA]** are known to
   - "Software Engineering student."
   - "Data & AI/ML builder."
   - "Backend lead, 2nd place at TechSprint 2026."
-  - one playful tagline **[OWNER DATA]**
+  - "Hidup tenang, bebas nafas, nasi padang, kopi panas."
 - **Intro:** "Software Engineering student on a 2+2 double degree between Indonesia and China. I train models, design databases, and build the backends that connect them."
 - **Role:** Software Engineering student · Data, AI/ML & Backend
 - **Base:** Nanjing, China (from Tangerang, Indonesia)
@@ -210,7 +232,7 @@ All content is supplied by the owner. Items marked **[OWNER DATA]** are known to
   - ~79K parameters, ~320 KB.
 - Joint-angle rep counter, rule-based recommendation engine, coach chat via LLM API, HealthKit integration, 41 XCTest tests.
 - Repo: https://github.com/RizMastah/Lifty
-- Model accuracy and dataset size: **[OWNER DATA]**
+- Model accuracy and dataset size: not documented by the owner; left out.
 
 **3. NexaOrder** (`slug: nexaorder`)
 
@@ -218,7 +240,7 @@ All content is supplied by the owner. Items marked **[OWNER DATA]** are known to
 - 8 design patterns: MVC, Repository, DTO, Strategy, Factory Method, State, Observer, Singleton.
 - Order state machine: PENDING → PAID → PROCESSING → COMPLETED / CANCELLED.
 - Repo: https://github.com/RizMastah/nexaorder
-- Year, semester and course: **[OWNER DATA]**
+- Jun 2026 · Semester 6 · J2EE-Based Framework for Enterprise (NXU)
 
 **4. StudyLens** (`slug: studylens`)
 
@@ -230,17 +252,16 @@ Up to 2 more featured projects may be promoted from the archive later. This only
 
 ### 6.3 All projects (archive, `/work`)
 
-Every project from semesters 1–6 (plus current work) goes here, using the Appendix A template. Known entries so far:
+Every project from semesters 1–6 (plus current work) goes here, using the Appendix A template. Semesters 1–4 are at UII, 5 onwards at NXU.
 
-| Project                                           | When                            | Role                                                              | Category         | Link                                 |
-| ------------------------------------------------- | ------------------------------- | ----------------------------------------------------------------- | ---------------- | ------------------------------------ |
-| TABULA: an "AI student" app that the user teaches | Nov 2026 – present (Semester 7) | Creator                                                           | Data & ML        | **[OWNER DATA: OK to publish?]**     |
-| TourEase (E-Tourism)                              | 2025                            | Database schema design, table relations, dummy data · team of 5   | Backend          | https://github.com/akramsu/E-Tourism |
-| CampusConnect                                     | 2024/2025                       | UI · Informatics Expo finalist                                    | UI/UX            | —                                    |
-| Edu-Hub                                           | UII, **[OWNER DATA: semester]** | UI/UX in Figma                                                    | UI/UX            | **[OWNER DATA: Figma link]**         |
-| SeaScope                                          | UII, **[OWNER DATA: semester]** | Team leader                                                       | **[OWNER DATA]** | **[OWNER DATA: description]**        |
-| The Legend of Sangkuriang                         | UII, **[OWNER DATA: semester]** | Java Processing animation: story, sound effects, most of the code | Other            | **[OWNER DATA: link]**               |
-| Remaining semester 1–6 projects                   | **[OWNER DATA]**                |                                                                   |                  |                                      |
+| Project | Type | Semester | Context | My role | Links / media |
+| --- | --- | --- | --- | --- | --- |
+| SeaScope | UI/UX (mobile app prototype, Figma) | 1 (2023) | — | Team leader, team of 4 | Figma prototype; poster |
+| Edu-Hub | Desktop (JavaFX) | 2 (2024) | — | UI/UX design in Figma | github.com/amga-d/Edu-Hub; poster |
+| CampusConnect | Web (PHP, MySQL) | 3 (2024) | Web-Based Application Development · Informatics Expo finalist | UI | github.com/amga-d/CampusConnect; poster |
+| TourEase | Web (Next.js, Express, Prisma, MySQL, Gemini) | 4 (2025) | Information Systems Development | Database design (schema, relations, seed data), team of 5 | github.com/akramsu/E-Tourism; poster |
+| The Legend of Sangkuriang | Animation (Java, Processing) | 4 (2025) | — | Story, sound effects, most of the code, team of 3 | YouTube video; poster |
+| TABULA | Web | 7 (Nov 2026 – present) | Personal | Creator | Published. Python, FastAPI, React, PostgreSQL; repo private while in development |
 
 ### 6.4 Awards
 
@@ -250,7 +271,7 @@ Every project from semesters 1–6 (plus current work) goes here, using the Appe
 ### 6.5 Education
 
 - **Nanjing Xiaozhuang University**, Nanjing, China. Software Engineering (double degree) · Sep 2025 – present · GPA 4.3 / 5.0
-- **Universitas Islam Indonesia (UII)**, Yogyakarta. Software Engineering · Sep 2023 – 2025 · GPA 3.84 / 4.00
+- **Universitas Islam Indonesia (UII)**, Yogyakarta. Informatics (double degree) · Sep 2023 – 2025 · GPA 3.84 / 4.00
 
 ### 6.6 Experience
 
@@ -277,21 +298,14 @@ Indonesian (native) · English (professional working proficiency) · Mandarin (e
 - **Mood:** dark, technical, with one accent color at a time, matching the reference's mood (see section 3).
 - **Direction: "bold but controlled".** The reference's loud style is used only where it creates first impressions. Every reading area stays calm and readable.
 - **Theme:** dark mode by default + light mode (toggle; persist choice in `localStorage` wrapped in try/catch).
-- **Time-of-day palettes (dark mode)** are selected automatically by **Nanjing hour** (`Asia/Shanghai`):
-
-  | Hours (Nanjing) | Palette       | Character                            |
-  | --------------- | ------------- | ------------------------------------ |
-  | 06–10           | Morning       | blue-tinted dark, warm yellow accent |
-  | 10–18           | Lab (default) | neutral dark, green/teal accent      |
-  | 18–22           | Evening       | warm dark, orange accent             |
-  | 22–06           | Late night    | near-black, violet/blue neon accent  |
-  - Only the accent and a slight background tint change. Every palette must pass WCAG AA.
-  - The footer shows e.g. "Palette: Late night (auto) · Nanjing 23:14", plus color dots for a manual override. The override is saved in `localStorage` (try/catch) and re-checked every 60 s while on auto.
-  - The palette is resolved by an inline script before first paint, so there is no flash.
-  - Light mode is a separate toggle and has one palette.
+- **Color modes:** two only.
+  - Dark: near-black, light text, green accent. This is the default.
+  - Light: warm off-white, dark text, deep green accent.
+  - A footer button switches between them. The choice is saved in `localStorage` (try/catch) and applied by an inline script before first paint, so there is no flash. `theme-color` follows the mode.
+  - Both modes must pass WCAG AA.
 
 - **Typography:**
-  - **Display:** a condensed, heavy, uppercase font (free license, e.g. Anton / Big Shoulders Display). Used **only** for the Hero name, section titles and the giant footer wordmark. Hero size is fit-to-width.
+  - **Display:** a condensed, heavy, uppercase font (free license, e.g. Anton / Big Shoulders Display). Used **only** for the Hero name and section titles. Hero size is fit-to-width.
   - **Body:** a clean sans for paragraphs, case studies and the archive.
   - **Mono:** for labels, tech tags, clocks and `[bracket]` asides.
   - All fonts come from Google Fonts or Fontshare.
@@ -392,7 +406,7 @@ docs/
 
 ## Appendix A: Project intake template
 
-Copy one block per project. Only `title`, `semester`, `category` and `oneLiner` are required; leave out anything you don't have.
+Copy one block per project. Only `title`, `semester`, `type`, `myRole` and `oneLiner` are required; leave out anything you don't have.
 
 ```yaml
 - title: KawalBijak
@@ -401,8 +415,9 @@ Copy one block per project. Only `title`, `semester`, `category` and `oneLiner` 
   period: Apr–May 2026
   campus: UII | NXU
   course: Web Programming # course name or "Competition" / "Personal"
-  category: [Backend, Data & ML] # Data & ML · Backend · Mobile · Web · UI/UX · Other
-  role: Backend Lead
+  type: Web # what the project IS: Web · Mobile · Desktop · UI/UX · Animation · Other
+  typeLabel: Web app # how the type is shown, e.g. "iOS app", "Desktop app (JavaFX)"
+  myRole: Backend lead: Formula Engine, Stats Engine, API routes # what YOU did
   team: 3 # 1 = solo
   stack: [PostgreSQL, TypeScript]
   oneLiner: PostgreSQL-backed platform with statistical anomaly detection.
@@ -410,7 +425,9 @@ Copy one block per project. Only `title`, `semester`, `category` and `oneLiner` 
     repo: https://github.com/...
     live: https://...
     figma: https://...
+    video: https://...
     demo: https://...
+  cover: /projects/kawalbijak/cover.webp # poster or screenshot
   award: 2nd Place, TechSprint Innovation Cup 2026
   featured: true # true = gets a case-study page
   publish: true # false = keep hidden

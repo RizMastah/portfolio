@@ -15,16 +15,26 @@ function seeded(slug: string) {
  * Placeholder cover (PRD §5.4): abstract data-style pattern + device frame.
  * Contains no fake UI; replaced automatically once a real `cover` exists.
  */
-export function ProjectMockup({ project, index }: { project: Project; index: number }) {
+export function ProjectMockup({
+  project,
+  index,
+  fill = false,
+}: {
+  project: Project;
+  index: number;
+  /** Crop to fill the box (e.g. square thumbnails) instead of fitting inside it. */
+  fill?: boolean;
+}) {
   const rand = seeded(project.slug);
   const bars = Array.from({ length: 28 }, () => 0.15 + rand() * 0.85);
-  const ios = project.platform === "ios";
+  const ios = project.mockupFrame === "ios";
 
   return (
     <svg
       viewBox="0 0 800 500"
       role="img"
       aria-label={`Placeholder cover for ${project.title}`}
+      preserveAspectRatio={fill ? "xMidYMid slice" : "xMidYMid meet"}
       className="h-full w-full"
     >
       <rect width="800" height="500" fill="var(--bg-raised)" />
@@ -78,7 +88,8 @@ export function ProjectMockup({ project, index }: { project: Project; index: num
         y={ios ? 270 : 280}
         textAnchor="middle"
         fill="var(--fg)"
-        fontFamily="var(--font-anton), Impact, sans-serif"
+        fontFamily="var(--font-big-shoulders), Impact, sans-serif"
+        fontWeight={900}
         fontSize={ios ? 40 : 64}
       >
         {project.title.toUpperCase()}

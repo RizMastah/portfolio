@@ -1,7 +1,6 @@
 import Link from "next/link";
-import Image from "next/image";
-import { featuredProjects, publishedProjects } from "@/content/projects";
-import { ProjectMockup } from "./ProjectMockup";
+import { describeMyRole, featuredProjects, publishedProjects } from "@/content/projects";
+import { CoverFrame } from "./CoverFrame";
 import { Section } from "./Section";
 
 export function SelectedWork() {
@@ -13,31 +12,15 @@ export function SelectedWork() {
       aside={`${featuredProjects.length} case studies`}
     >
       <ul className="grid gap-x-6 gap-y-14 md:grid-cols-2">
-        {featuredProjects.map((p, i) => (
+        {featuredProjects.map((p) => (
           <li key={p.slug}>
             <Link href={`/work/${p.slug}`} className="group block">
-              <div className="border-line aspect-[8/5] overflow-hidden rounded-lg border">
-                <div className="h-full w-full transition-transform duration-500 group-hover:scale-[1.03]">
-                  {p.cover ? (
-                    <Image
-                      src={p.cover}
-                      alt={`${p.title} screenshot`}
-                      width={1600}
-                      height={1000}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <ProjectMockup project={p} index={i} />
-                  )}
-                </div>
-              </div>
+              <CoverFrame project={p} sizes="(min-width: 768px) 50vw, 100vw" />
               <div className="mt-5 flex items-start justify-between gap-4">
                 <div>
                   <h3 className="display text-4xl md:text-5xl">{p.title}</h3>
                   <p className="label text-muted mt-2">
-                    {[p.role, p.team && p.team > 1 ? `team of ${p.team}` : null, p.period]
-                      .filter(Boolean)
-                      .join(" · ")}
+                    {p.period}
                   </p>
                 </div>
                 <span
@@ -48,6 +31,9 @@ export function SelectedWork() {
                 </span>
               </div>
               <p className="mt-3 max-w-xl leading-relaxed">{p.oneLiner}</p>
+              <p className="mt-3 max-w-xl text-sm leading-relaxed">
+                <span className="label text-muted">My role</span> {describeMyRole(p)}
+              </p>
               {p.award ? <p className="label text-accent mt-3">★ {p.award}</p> : null}
               <ul className="mt-4 flex flex-wrap gap-2" aria-label="Tech stack">
                 {p.stack.map((s) => (

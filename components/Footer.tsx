@@ -1,13 +1,15 @@
 import { profile } from "@/content/profile";
-import { PaletteControls } from "./PaletteControls";
 import { container } from "./Section";
+import { ThemeToggle } from "./ThemeToggle";
 import { Year } from "./Year";
 
 export function Footer() {
   return (
-    <footer className="border-line overflow-hidden border-t pt-10">
+    <footer className="border-line border-t py-10">
       <div className={`${container} grid gap-6`}>
-        <PaletteControls />
+        <div>
+          <ThemeToggle />
+        </div>
         <div className="label text-muted flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <p>
             © <Year /> {profile.name}
@@ -21,13 +23,6 @@ export function Footer() {
           </a>
         </div>
       </div>
-      <p
-        aria-hidden
-        className="display mt-10 text-center text-[24vw] leading-[0.75] select-none"
-        data-reveal
-      >
-        RAIHAN<span className="text-outline">.</span>
-      </p>
     </footer>
   );
 }

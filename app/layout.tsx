@@ -1,14 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Anton, Instrument_Sans, JetBrains_Mono } from "next/font/google";
+import { Big_Shoulders, Instrument_Sans, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ClientEffects } from "@/components/effects/ClientEffects";
 import { profile } from "@/content/profile";
-import { paletteBootScript } from "@/lib/palette";
+import { themeBootScript, themeColors } from "@/lib/theme";
 import { siteUrl } from "@/lib/site";
 import "./globals.css";
 
-const anton = Anton({ variable: "--font-anton", weight: "400", subsets: ["latin"] });
+const bigShoulders = Big_Shoulders({
+  variable: "--font-big-shoulders",
+  weight: "900",
+  subsets: ["latin"],
+});
 const instrument = Instrument_Sans({
   variable: "--font-instrument",
   subsets: ["latin"],
@@ -38,8 +42,9 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", title, description: profile.intro },
 };
 
+// Updated at runtime to the visitor's mode (see themeBootScript).
 export const viewport: Viewport = {
-  themeColor: "#0c0f10",
+  themeColor: themeColors.dark,
 };
 
 const personJsonLd = {
@@ -50,7 +55,7 @@ const personJsonLd = {
   jobTitle: "Software Engineering student",
   description: profile.intro,
   email: `mailto:${profile.contact.email}`,
-  sameAs: [profile.contact.github, profile.contact.linkedin],
+  sameAs: [profile.contact.github, profile.contact.linkedin, profile.contact.instagram],
   alumniOf: [
     { "@type": "CollegeOrUniversity", name: "Universitas Islam Indonesia" },
     { "@type": "CollegeOrUniversity", name: "Nanjing Xiaozhuang University" },
@@ -62,19 +67,24 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      data-palette="lab"
       data-theme="dark"
       suppressHydrationWarning
-      className={`${anton.variable} ${instrument.variable} ${jetbrains.variable} antialiased`}
+      className={`${bigShoulders.variable} ${instrument.variable} ${jetbrains.variable} antialiased`}
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: paletteBootScript }} />
+        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
       </head>
       <body className="min-h-dvh">
+        <a
+          href="#main"
+          className="label bg-accent text-accent-fg sr-only z-[60] rounded px-3 py-2 focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+        >
+          Skip to content
+        </a>
         {children}
         <ClientEffects />
         {/* Analytics scripts are served by Vercel only; skip them elsewhere. */}

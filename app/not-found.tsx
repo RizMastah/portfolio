@@ -17,8 +17,8 @@ export default function NotFound() {
             4<span className="text-outline">0</span>4
           </h1>
           <p className="mt-6 max-w-xl text-xl leading-relaxed">
-            This page doesn&apos;t exist, or it moved while I was refactoring. The good stuff is
-            still here:
+            This page doesn’t exist, or it moved while I was refactoring. The good stuff is still
+            here:
           </p>
           <div className="mt-10 flex flex-wrap gap-3">
             <Link
