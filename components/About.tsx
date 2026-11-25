@@ -27,6 +27,12 @@ export function About() {
             height={profile.photo.height}
             alt={`Portrait of ${profile.name}`}
           />
+          <p
+            aria-hidden
+            className="text-muted mt-3 max-w-sm font-[family-name:var(--font-doto)] text-[0.8rem] leading-snug tracking-[0.12em] uppercase"
+          >
+            subj raihan a.b. / loc nanjing 32.06n 118.80e / scan 112x112 1-bit
+          </p>
         </div>
 
         <div className="grid gap-12 md:col-span-12 md:grid-cols-2 lg:grid-cols-4">

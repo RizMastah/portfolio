@@ -126,6 +126,10 @@ export function DitherPortrait({
         rich
           ? (e) => {
               move(e);
+              // Brief CRT flicker as the picture switches on.
+              wrap.current?.classList.remove("crt-on");
+              void wrap.current?.offsetWidth;
+              wrap.current?.classList.add("crt-on");
               const size = wrap.current?.clientWidth ?? 0;
               wrap.current?.style.setProperty("--hole", `${Math.round(size * 1.5)}px`);
             }
@@ -143,7 +147,15 @@ export function DitherPortrait({
         className="h-full w-full object-cover"
       />
       {rich ? (
-        <canvas ref={canvas} aria-hidden className="dither-layer absolute inset-0 h-full w-full" />
+        <>
+          <canvas
+            ref={canvas}
+            aria-hidden
+            className="dither-layer absolute inset-0 h-full w-full"
+          />
+          {/* CRT glass: scanlines, vignette and a faint curved highlight. */}
+          <span aria-hidden className="crt-glass pointer-events-none absolute inset-0" />
+        </>
       ) : null}
     </div>
   );

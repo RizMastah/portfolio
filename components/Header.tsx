@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { profile } from "@/content/profile";
 import { container } from "./Section";
@@ -14,6 +15,7 @@ const nav = [
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     if (!open) return;
@@ -38,7 +40,10 @@ export function Header() {
             <a
               key={item.href}
               href={item.href}
-              className="label text-muted hover:text-fg transition-colors"
+              aria-current={
+                item.href === "/#work" && pathname.startsWith("/work") ? "page" : undefined
+              }
+              className="bracket label text-muted hover:text-fg aria-[current=page]:text-fg transition-colors"
             >
               {item.label}
             </a>

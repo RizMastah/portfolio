@@ -32,6 +32,7 @@ function Row({ p, onHover }: { p: Project; onHover: (p: Project | null) => void 
 
   return (
     <li
+      id={`p-${p.slug}`}
       onPointerEnter={() => onHover(p)}
       className="group/row border-line grid gap-4 border-b py-6 md:grid-cols-12 md:gap-6"
     >

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
-import { ProjectArchive } from "@/components/ProjectArchive";
+import { WorkViews } from "@/components/work/WorkViews";
 import { container } from "@/components/Section";
 import { publishedProjects } from "@/content/projects";
 
@@ -24,7 +24,7 @@ export default function WorkPage() {
             {publishedProjects.length} projects from semester 1 to now. Case studies are marked; the
             rest link straight to their repo or demo.
           </p>
-          <ProjectArchive projects={publishedProjects} />
+          <WorkViews projects={publishedProjects} />
         </div>
       </main>
       <Footer />

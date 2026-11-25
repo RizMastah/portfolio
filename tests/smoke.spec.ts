@@ -195,3 +195,20 @@ test("palette can open the SQL console", async ({ page }) => {
   await page.keyboard.press("Enter");
   await expect(page.getByRole("heading", { name: /raihan\.db/ })).toBeVisible();
 });
+
+test("work page switches between list, index and map views", async ({ page }) => {
+  await page.goto("/work");
+  await page.getByRole("tab", { name: /^Index/ }).click();
+  const index = page.getByRole("region", { name: "Project index" });
+  await expect(index.getByRole("link", { name: /KawalBijak/ })).toBeVisible();
+  await expect(page).toHaveURL(/#index$/);
+
+  await page.getByRole("tab", { name: /^Map/ }).click();
+  const map = page.getByRole("region", { name: "Project map" });
+  await expect(map.getByRole("link", { name: "Lifty, case study" })).toBeVisible();
+  await expect(map.getByText(/PCA over \d+ features/)).toBeVisible();
+
+  // A project without a case study opens its row in the list view.
+  await map.getByRole("button", { name: "TourEase, show details" }).click();
+  await expect(page.getByRole("heading", { name: "TourEase" })).toBeVisible();
+});

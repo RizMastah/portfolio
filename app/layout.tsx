@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Big_Shoulders, Instrument_Sans, JetBrains_Mono } from "next/font/google";
+import { Big_Shoulders, Doto, Instrument_Sans, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ClientEffects } from "@/components/effects/ClientEffects";
@@ -16,6 +16,13 @@ const bigShoulders = Big_Shoulders({
 const instrument = Instrument_Sans({
   variable: "--font-instrument",
   subsets: ["latin"],
+});
+// Dot-matrix face, used only for the small "scan" caption under the portrait.
+const doto = Doto({
+  variable: "--font-doto",
+  weight: "700",
+  subsets: ["latin"],
+  preload: false,
 });
 const jetbrains = JetBrains_Mono({
   variable: "--font-jetbrains",
@@ -69,7 +76,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       data-theme="dark"
       suppressHydrationWarning
-      className={`${bigShoulders.variable} ${instrument.variable} ${jetbrains.variable} antialiased`}
+      className={`${bigShoulders.variable} ${instrument.variable} ${jetbrains.variable} ${doto.variable} antialiased`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
