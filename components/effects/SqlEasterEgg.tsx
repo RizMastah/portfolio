@@ -38,8 +38,18 @@ export default function SqlEasterEgg() {
         dialog.current?.showModal();
       }
     };
+    // The command palette opens the console too.
+    const onOpen = () => {
+      if (dialog.current?.open) return;
+      setOpened(true);
+      dialog.current?.showModal();
+    };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener("rab:open-sql", onOpen);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("rab:open-sql", onOpen);
+    };
   }, []);
 
   return (

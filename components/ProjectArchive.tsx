@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { type Project, type ProjectType, describeMyRole, projectTypes } from "@/content/projects";
 import { CoverFrame } from "./CoverFrame";
+import { CursorPreview } from "./hover/CursorPreview";
+import { useRichHover } from "./hover/useRichHover";
 import { LightboxLink } from "./Lightbox";
 
 type Filter = "All" | ProjectType;
@@ -24,17 +26,24 @@ function groupLabel(p: Project) {
   return `Semester ${p.semester} · ${campus}`;
 }
 
-function Row({ p }: { p: Project }) {
+function Row({ p, onHover }: { p: Project; onHover: (p: Project | null) => void }) {
   const meta = [p.typeLabel, p.period, p.course].filter(Boolean).join(" · ");
   const links = Object.entries(p.links ?? {}).filter(([, v]) => v) as [string, string][];
 
   return (
-    <li className="border-line grid gap-4 border-b py-6 md:grid-cols-12 md:gap-6">
-      <div className="max-w-64 md:col-span-2 md:max-w-none">
+    <li
+      onPointerEnter={() => onHover(p)}
+      className="group/row border-line grid gap-4 border-b py-6 md:grid-cols-12 md:gap-6"
+    >
+      {/* On desktop with a mouse the cover follows the cursor instead (CursorPreview). */}
+      <div className="fancy:md:hidden max-w-64 md:col-span-2 md:max-w-none">
         <CoverFrame project={p} sizes="(min-width: 768px) 16vw, 256px" />
       </div>
-      <div className="md:col-span-3">
-        <h3 className="display text-3xl md:text-4xl" translate="no">
+      <div className="fancy:md:col-span-5 md:col-span-3">
+        <h3
+          className="display group-hover/row:text-accent fancy:md:text-6xl fancy:md:group-hover/row:translate-x-3 text-3xl transition-[translate,color] duration-300 md:text-4xl"
+          translate="no"
+        >
           {p.featured ? (
             <Link href={`/work/${p.slug}`} className="hover:text-accent transition-colors">
               {p.title} <span className="label align-middle">→ case study</span>
@@ -76,10 +85,7 @@ function Row({ p }: { p: Project }) {
         ))}
         {p.poster ? (
           <li>
-            <LightboxLink
-              item={{ ...p.poster, alt: `${p.title} poster` }}
-              label="View poster"
-            />
+            <LightboxLink item={{ ...p.poster, alt: `${p.title} poster` }} label="View poster" />
           </li>
         ) : null}
       </ul>
@@ -90,6 +96,8 @@ function Row({ p }: { p: Project }) {
 export function ProjectArchive({ projects }: { projects: Project[] }) {
   const [filter, setFilter] = useState<Filter>("All");
   const [sort, setSort] = useState<Sort>("semester");
+  const [hovered, setHovered] = useState<Project | null>(null);
+  const rich = useRichHover();
 
   const groups = useMemo(() => {
     const visible = projects.filter((p) => filter === "All" || p.type === filter);
@@ -154,6 +162,7 @@ export function ProjectArchive({ projects }: { projects: Project[] }) {
         </div>
       </div>
 
+      {rich ? <CursorPreview project={hovered} /> : null}
       {groups.length === 0 ? (
         <p className="text-muted">No projects of this type yet.</p>
       ) : (
@@ -162,9 +171,9 @@ export function ProjectArchive({ projects }: { projects: Project[] }) {
             <h2 className="label text-muted mb-2">
               {label} <span>({items.length})</span>
             </h2>
-            <ul className="border-line border-t">
+            <ul className="border-line border-t" onPointerLeave={() => setHovered(null)}>
               {items.map((p) => (
-                <Row key={p.slug} p={p} />
+                <Row key={p.slug} p={p} onHover={rich ? setHovered : () => {}} />
               ))}
             </ul>
           </section>

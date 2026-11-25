@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { profile } from "@/content/profile";
 import { container } from "./Section";
+import { StatusBar } from "./StatusBar";
 
 const nav = [
   { href: "/#work", label: "Work" },
@@ -25,6 +26,7 @@ export function Header() {
 
   return (
     <header className="border-line/60 bg-bg/80 fixed inset-x-0 top-0 z-50 border-b backdrop-blur-md">
+      <StatusBar />
       <div className={`${container} flex h-14 items-center justify-between gap-4`}>
         <Link href="/#top" className="label text-fg" onClick={() => setOpen(false)}>
           {profile.shortName}

@@ -19,9 +19,7 @@ export function SelectedWork() {
               <div className="mt-5 flex items-start justify-between gap-4">
                 <div>
                   <h3 className="display text-4xl md:text-5xl">{p.title}</h3>
-                  <p className="label text-muted mt-2">
-                    {p.period}
-                  </p>
+                  <p className="label text-muted mt-2">{p.period}</p>
                 </div>
                 <span
                   aria-hidden

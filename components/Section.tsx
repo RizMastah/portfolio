@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { DecodeOnView } from "./hover/DecodeOnView";
 
 export const container = "mx-auto w-full max-w-[1440px] px-4 md:px-8";
 
@@ -20,11 +21,17 @@ export function Section({ id, index, title, aside, children }: Props) {
     >
       <div className={container}>
         <div className="mb-10 grid gap-4 md:mb-14 md:grid-cols-12 md:items-end" data-reveal>
-          <p className="label text-muted md:col-span-2">({index})</p>
+          <p className="label text-muted md:col-span-2">
+            <DecodeOnView text={`(${index})`} />
+          </p>
           <h2 id={`${id}-title`} className="display text-[clamp(3rem,9vw,8.5rem)] md:col-span-7">
             {title}
           </h2>
-          {aside ? <p className="label text-muted md:col-span-3 md:text-right">[{aside}]</p> : null}
+          {aside ? (
+            <p className="label text-muted md:col-span-3 md:text-right">
+              <DecodeOnView text={`[${aside}]`} />
+            </p>
+          ) : null}
         </div>
         <div data-reveal>{children}</div>
       </div>

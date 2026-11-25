@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { DitherPortrait } from "./hover/DitherPortrait";
 import { education, experience, languages, organizations, profile } from "@/content/profile";
 import { Section } from "./Section";
 
@@ -21,13 +21,11 @@ export function About() {
           ))}
         </div>
         <div className="md:col-span-4">
-          <Image
+          <DitherPortrait
             src={profile.photo.src}
             width={profile.photo.width}
             height={profile.photo.height}
             alt={`Portrait of ${profile.name}`}
-            sizes="(min-width: 768px) 30vw, 100vw"
-            className="border-line aspect-square w-full max-w-sm rounded-lg border object-cover"
           />
         </div>
 

@@ -1,5 +1,6 @@
 import { profile } from "@/content/profile";
 import { DualClock } from "./DualClock";
+import { DecodeOnView } from "./hover/DecodeOnView";
 import { RotatingTagline } from "./RotatingTagline";
 import { SplitChars } from "./SplitChars";
 import { container } from "./Section";
@@ -55,7 +56,9 @@ export function Hero() {
             <dl className="border-line grid gap-3 border-t pt-6">
               {profile.info.map((row) => (
                 <div key={row.label} className="grid grid-cols-[5.5rem_1fr] gap-4">
-                  <dt className="label text-muted">{row.label}</dt>
+                  <dt className="label text-muted">
+                    <DecodeOnView text={row.label} />
+                  </dt>
                   <dd className="label leading-relaxed normal-case!">{row.value}</dd>
                 </div>
               ))}

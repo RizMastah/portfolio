@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { CoverFrame } from "@/components/CoverFrame";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
+import { DecodeOnView } from "@/components/hover/DecodeOnView";
 import { LightboxGallery } from "@/components/Lightbox";
 import { container } from "@/components/Section";
 import { describeMyRole, featuredProjects } from "@/content/projects";
@@ -69,7 +70,9 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
                 .filter(([, v]) => v)
                 .map(([k, v]) => (
                   <div key={k}>
-                    <dt className="label text-muted">{k}</dt>
+                    <dt className="label text-muted">
+                      <DecodeOnView text={k} />
+                    </dt>
                     <dd className="mt-1">{v}</dd>
                   </div>
                 ))}

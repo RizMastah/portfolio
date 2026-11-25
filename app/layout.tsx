@@ -8,9 +8,9 @@ import { themeBootScript, themeColors } from "@/lib/theme";
 import { siteUrl } from "@/lib/site";
 import "./globals.css";
 
+// Variable font (wght 100–900): the hero name eases its weight toward the cursor.
 const bigShoulders = Big_Shoulders({
   variable: "--font-big-shoulders",
-  weight: "900",
   subsets: ["latin"],
 });
 const instrument = Instrument_Sans({

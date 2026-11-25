@@ -48,7 +48,7 @@ body {
 
 html {
   background: var(--bg);
-  scroll-padding-top: 5rem;
+  scroll-padding-top: 6.5rem;
 }
 
 body {
@@ -155,6 +155,105 @@ body {
     opacity: 0;
     transform: translateY(0.6em);
   }
+}
+
+/* Desktop with a mouse and motion allowed: where hover effects replace static UI. */
+@custom-variant fancy (@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference));
+
+/* Cursor preview swaps covers with a short reveal. */
+.preview-in {
+  animation: preview-in 0.45s var(--ease-out);
+}
+@keyframes preview-in {
+  from {
+    opacity: 0;
+    scale: 1.12;
+    filter: blur(6px);
+  }
+}
+
+/* Page transitions: a project cover morphs from its card into the case-study
+   header (React <ViewTransition share="morph">); blur hides scaling artefacts. */
+::view-transition-group(.morph) {
+  animation-duration: 0.55s;
+  animation-timing-function: var(--ease-out);
+}
+::view-transition-image-pair(.morph) {
+  animation-name: morph-blur;
+}
+@keyframes morph-blur {
+  35% {
+    filter: blur(4px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* Certificate hover: the front card tilts toward the cursor and a foil sheen
+   (like a printed authenticity seal) slides across it. --mx/--my are 0–1. */
+.cert-tilt {
+  transition: transform 0.25s var(--ease-out);
+  transform: rotateX(calc((var(--my, 0.5) - 0.5) * -14deg))
+    rotateY(calc((var(--mx, 0.5) - 0.5) * 16deg));
+}
+.cert-holo {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-out);
+  /* Rainbow band: multiply tints the white paper, like a hologram foil. */
+  mix-blend-mode: multiply;
+  background: linear-gradient(
+    115deg,
+    transparent 18%,
+    rgb(61 220 151 / 0.75) 32%,
+    rgb(90 190 255 / 0.7) 44%,
+    rgb(190 140 255 / 0.7) 56%,
+    rgb(255 180 120 / 0.65) 68%,
+    transparent 82%
+  );
+  background-size: 260% 260%;
+  background-position: calc(var(--mx, 0.5) * 100%) calc(var(--my, 0.5) * 100%);
+}
+/* Light spot that follows the cursor. */
+.cert-holo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: screen;
+  background: radial-gradient(
+    circle at calc(var(--mx, 0.5) * 100%) calc(var(--my, 0.5) * 100%),
+    rgb(255 255 255 / 0.7),
+    transparent 35%
+  );
+}
+.group:hover .cert-holo {
+  opacity: 0.8;
+}
+
+/* Profile photo: the dithered layer opens a growing hole at the cursor. */
+@property --hole {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+/* The hole size changes on the wrapper, so the transition lives there and the
+   layer inherits the animated value. */
+.dither-wrap {
+  transition: --hole 0.7s var(--ease-out);
+}
+.dither-layer {
+  mask-image: radial-gradient(
+    circle at var(--px, 50%) var(--py, 50%),
+    transparent var(--hole),
+    #000 calc(var(--hole) + 28px)
+  );
 }
 
 /* Custom cursor only hides the native one once it is mounted. */

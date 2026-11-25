@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { type CSSProperties, useCallback, useEffect, useRef, useState } from "react";
+import { useRichHover } from "./hover/useRichHover";
 
 export type LightboxItem = { src: string; alt: string; width: number; height: number };
 
@@ -65,15 +66,29 @@ function useLightbox(items: LightboxItem[]) {
             <span className="flex gap-2">
               {many ? (
                 <>
-                  <button type="button" onClick={() => step(-1)} className="rounded-full border border-white/30 px-3 py-1.5 hover:bg-white/10" aria-label="Previous image">
+                  <button
+                    type="button"
+                    onClick={() => step(-1)}
+                    className="rounded-full border border-white/30 px-3 py-1.5 hover:bg-white/10"
+                    aria-label="Previous image"
+                  >
                     ←
                   </button>
-                  <button type="button" onClick={() => step(1)} className="rounded-full border border-white/30 px-3 py-1.5 hover:bg-white/10" aria-label="Next image">
+                  <button
+                    type="button"
+                    onClick={() => step(1)}
+                    className="rounded-full border border-white/30 px-3 py-1.5 hover:bg-white/10"
+                    aria-label="Next image"
+                  >
                     →
                   </button>
                 </>
               ) : null}
-              <button type="button" onClick={() => ref.current?.close()} className="rounded-full border border-white/30 px-3 py-1.5 hover:bg-white/10">
+              <button
+                type="button"
+                onClick={() => ref.current?.close()}
+                className="rounded-full border border-white/30 px-3 py-1.5 hover:bg-white/10"
+              >
                 Close (Esc)
               </button>
             </span>
@@ -93,8 +108,15 @@ export function LightboxGallery({ items, phone }: { items: LightboxItem[]; phone
       <ul className={`grid gap-4 ${phone ? "grid-cols-2 sm:grid-cols-4" : "sm:grid-cols-2"}`}>
         {items.map((g, i) => (
           <li key={g.src}>
-            <button type="button" onClick={() => open(i)} className="group block w-full text-left" aria-label={`Enlarge: ${g.alt}`}>
-              <span className={`border-line bg-bg-raised block overflow-hidden rounded-lg border ${phone ? "aspect-[420/910]" : "aspect-[16/10]"}`}>
+            <button
+              type="button"
+              onClick={() => open(i)}
+              className="group block w-full text-left"
+              aria-label={`Enlarge: ${g.alt}`}
+            >
+              <span
+                className={`border-line bg-bg-raised block overflow-hidden rounded-lg border ${phone ? "aspect-[420/910]" : "aspect-[16/10]"}`}
+              >
                 <Image
                   src={g.src}
                   alt=""
@@ -117,13 +139,31 @@ export function LightboxGallery({ items, phone }: { items: LightboxItem[]; phone
 /** Certificates as a fanned stack of cards; click opens all of them in the viewer. */
 export function CertificateStack({ items, title }: { items: LightboxItem[]; title: string }) {
   const { open, dialog } = useLightbox(items);
+  const rich = useRichHover();
+  const button = useRef<HTMLButtonElement>(null);
+
+  // Cursor position (0–1) drives the foil sheen and the front card's tilt.
+  function track(e: React.PointerEvent<HTMLButtonElement>) {
+    if (!rich || !button.current) return;
+    const box = button.current.getBoundingClientRect();
+    button.current.style.setProperty("--mx", ((e.clientX - box.left) / box.width).toFixed(3));
+    button.current.style.setProperty("--my", ((e.clientY - box.top) / box.height).toFixed(3));
+  }
+  function reset() {
+    button.current?.style.setProperty("--mx", "0.5");
+    button.current?.style.setProperty("--my", "0.5");
+  }
+
   return (
     <>
       <button
+        ref={button}
         type="button"
         onClick={() => open(0)}
+        onPointerMove={track}
+        onPointerLeave={reset}
         aria-label={`View ${items.length > 1 ? `${items.length} certificates` : "certificate"}: ${title}`}
-        className="group relative block aspect-[1.41] w-full max-w-sm"
+        className="group relative block aspect-[1.41] w-full max-w-sm [perspective:900px]"
       >
         {items
           .map((c, i) => ({ c, i }))
@@ -131,10 +171,30 @@ export function CertificateStack({ items, title }: { items: LightboxItem[]; titl
           .map(({ c, i }) => (
             <span
               key={c.src}
-              style={{ "--r": `${i === 0 ? -2 : 4}deg`, "--x": `${i * 7}%`, "--y": `${i * -5}%` } as CSSProperties}
-              className="border-line absolute inset-0 overflow-hidden rounded-md border shadow-lg transition-transform duration-500 [transform:translate(var(--x),var(--y))_rotate(var(--r))] group-hover:[transform:translate(calc(var(--x)*1.6),calc(var(--y)*1.6))_rotate(calc(var(--r)*1.5))]"
+              style={
+                {
+                  "--r": `${i === 0 ? -2 : 4}deg`,
+                  "--x": `${i * 7}%`,
+                  "--y": `${i * -5}%`,
+                } as CSSProperties
+              }
+              className="absolute inset-0 [transform:translate(var(--x),var(--y))_rotate(var(--r))] transition-transform duration-500 [transform-style:preserve-3d] group-hover:[transform:translate(calc(var(--x)*1.6),calc(var(--y)*1.6))_rotate(calc(var(--r)*1.5))]"
             >
-              <Image src={c.src} alt="" width={c.width} height={c.height} sizes="(min-width: 768px) 24rem, 90vw" className="h-full w-full object-cover" />
+              <span
+                className={`border-line absolute inset-0 overflow-hidden rounded-md border shadow-lg ${
+                  i === 0 && rich ? "cert-tilt" : ""
+                }`}
+              >
+                <Image
+                  src={c.src}
+                  alt=""
+                  width={c.width}
+                  height={c.height}
+                  sizes="(min-width: 768px) 24rem, 90vw"
+                  className="h-full w-full object-cover"
+                />
+                {i === 0 && rich ? <span aria-hidden className="cert-holo" /> : null}
+              </span>
             </span>
           ))}
         <span className="label bg-bg/85 absolute bottom-3 left-3 rounded-full px-3 py-1.5 backdrop-blur-sm">
@@ -151,7 +211,11 @@ export function LightboxLink({ item, label }: { item: LightboxItem; label: strin
   const { open, dialog } = useLightbox([item]);
   return (
     <>
-      <button type="button" onClick={() => open(0)} className="label hover:text-accent transition-colors">
+      <button
+        type="button"
+        onClick={() => open(0)}
+        className="label hover:text-accent transition-colors"
+      >
         {label}
       </button>
       {dialog}

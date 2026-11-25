@@ -130,11 +130,12 @@ test("archive shows type, my role and posters for UII projects", async ({ page }
   await page.getByRole("button", { name: /^Desktop/ }).click();
   await expect(page.getByRole("heading", { name: "Edu-Hub" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "TourEase" })).toHaveCount(0);
-  await expect(page.getByText("Desktop app (JavaFX)").first()).toBeVisible();
+  await expect(page.getByText(/Desktop app \(JavaFX\) ·/)).toBeVisible();
   await expect(page.getByText("UI/UX design in Figma.")).toBeVisible();
-  await expect(page.getByRole("img", { name: /Edu-Hub: visual from the project/ })).toBeVisible();
+  // Hidden on desktop with a mouse (the cursor preview replaces it), so match by attribute.
+  await expect(page.locator('img[alt="Edu-Hub: visual from the project"]')).toHaveCount(1);
   // Cover strip shows the type and year.
-  await expect(page.locator("main .tabular-nums").first()).toHaveText(/^\d{4}$/);
+  await expect(page.locator("main .tabular-nums .sr-only").first()).toHaveText(/^\d{4}$/);
   await page.getByRole("button", { name: "View poster" }).click();
   const dialog = page.getByRole("dialog");
   await expect(dialog.getByRole("img", { name: "Edu-Hub poster" })).toBeVisible();
@@ -168,7 +169,29 @@ test("awards show certificates in a viewer", async ({ request, page }) => {
   await expect(dialog.getByRole("img", { name: /Raihan Aditito Bagastama/ })).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(dialog).toBeHidden();
-  await expect(page.getByRole("button", { name: /View certificate: Informatics Expo/ })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: /View certificate: Informatics Expo/ }),
+  ).toBeVisible();
   const cv = await request.get("/CV_Raihan_Aditito_Bagastama.pdf");
   expect(cv.status()).toBe(200);
+});
+
+test("command palette opens with Ctrl+K and jumps to a case study", async ({ page }) => {
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  await page.keyboard.press("Control+k");
+  const palette = page.getByRole("dialog", { name: "Command palette" });
+  await expect(palette).toBeVisible();
+  await page.getByRole("textbox", { name: "Search commands" }).fill("lifty");
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/\/work\/lifty$/);
+});
+
+test("palette can open the SQL console", async ({ page }) => {
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  await page.keyboard.press("Control+k");
+  await page.getByRole("textbox", { name: "Search commands" }).fill("raihan.db");
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("heading", { name: /raihan\.db/ })).toBeVisible();
 });
