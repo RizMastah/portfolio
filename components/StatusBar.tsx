@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { profile } from "@/content/profile";
+import { setFx, useFxOn } from "@/lib/fx";
 
 const COMMIT = process.env.NEXT_PUBLIC_COMMIT ?? "local";
 
@@ -23,6 +24,7 @@ export function StatusBar() {
   const [time, setTime] = useState<string | null>(null);
   const [lcp, setLcp] = useState<number | null>(null);
   const [mac, setMac] = useState(true);
+  const fxOn = useFxOn();
 
   useEffect(() => {
     const tick = () => setTime(nanjingTime());
@@ -60,6 +62,19 @@ export function StatusBar() {
         <span className="flex items-center gap-4">
           <span>build {COMMIT}</span>
           <span>lcp {lcp === null ? "—" : `${(lcp / 1000).toFixed(2)}s`}</span>
+          <button
+            type="button"
+            onClick={() => setFx(!fxOn)}
+            aria-pressed={fxOn}
+            className="hover:text-fg flex items-center gap-1.5 transition-colors"
+            title="Turn motion and hover effects on or off"
+          >
+            <span
+              aria-hidden
+              className={`size-1.5 rounded-full ${fxOn ? "bg-accent" : "border-muted border"}`}
+            />
+            fx {fxOn ? "on" : "off"}
+          </button>
           <button
             type="button"
             onClick={() => window.dispatchEvent(new Event("rab:open-palette"))}

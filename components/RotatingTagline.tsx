@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { isFxOff } from "@/lib/fx";
 
 /** Cycles through taglines every 2.5 s. Static under reduced motion. */
 export function RotatingTagline({ items }: { items: readonly string[] }) {
@@ -8,7 +9,7 @@ export function RotatingTagline({ items }: { items: readonly string[] }) {
 
   useEffect(() => {
     if (items.length < 2) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || isFxOff()) return;
     const id = setInterval(() => setIndex((i) => (i + 1) % items.length), 2500);
     return () => clearInterval(id);
   }, [items.length]);

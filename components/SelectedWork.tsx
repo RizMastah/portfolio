@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { describeMyRole, featuredProjects, publishedProjects } from "@/content/projects";
 import { CoverFrame } from "./CoverFrame";
+import { ProjectMap } from "./work/ProjectMap";
 import { Section } from "./Section";
 
 export function SelectedWork() {
@@ -50,6 +51,9 @@ export function SelectedWork() {
         ))}
       </ul>
 
+      <div className="mt-20">
+        <ProjectMap compact />
+      </div>
       <AllProjectsLink />
     </Section>
   );

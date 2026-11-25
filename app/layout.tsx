@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ClientEffects } from "@/components/effects/ClientEffects";
 import { profile } from "@/content/profile";
+import { fxBootScript } from "@/lib/fx-boot";
 import { themeBootScript, themeColors } from "@/lib/theme";
 import { siteUrl } from "@/lib/site";
 import "./globals.css";
@@ -79,7 +80,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${bigShoulders.variable} ${instrument.variable} ${jetbrains.variable} ${doto.variable} antialiased`}
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
+        <script dangerouslySetInnerHTML={{ __html: themeBootScript + fxBootScript }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}

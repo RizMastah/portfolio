@@ -1,5 +1,5 @@
 import { profile } from "@/content/profile";
-import { CopyEmailButton } from "./CopyEmailButton";
+import { HoldToConnect } from "./HoldToConnect";
 import { container } from "./Section";
 
 export function Contact() {
@@ -29,14 +29,14 @@ export function Contact() {
 
         <div className="mt-14 grid gap-10 md:grid-cols-12">
           <div className="md:col-span-7">
-            <div className="border-line flex flex-col gap-4 rounded-lg border p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="border-line flex flex-col gap-6 rounded-lg border p-5">
               <a
                 href={`mailto:${profile.contact.email}`}
                 className="hover:text-accent text-xl break-all transition-colors md:text-2xl"
               >
                 {profile.contact.email} ↗
               </a>
-              <CopyEmailButton email={profile.contact.email} />
+              <HoldToConnect email={profile.contact.email} />
             </div>
           </div>
           <ul className="md:col-span-4 md:col-start-9">

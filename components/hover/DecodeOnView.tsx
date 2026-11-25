@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { isFxOff } from "@/lib/fx";
 import { ScrambleText } from "./ScrambleText";
 
 const REDUCED = "(prefers-reduced-motion: reduce)";
@@ -15,7 +16,7 @@ export function DecodeOnView({ text }: { text: string }) {
 
   useEffect(() => {
     const el = ref.current;
-    if (!el || window.matchMedia(REDUCED).matches) return;
+    if (!el || window.matchMedia(REDUCED).matches || isFxOff()) return;
     const io = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {

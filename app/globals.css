@@ -158,7 +158,27 @@ body {
 }
 
 /* Desktop with a mouse and motion allowed: where hover effects replace static UI. */
-@custom-variant fancy (@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference));
+@custom-variant fancy {
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    html:not(.fx-off) & {
+      @slot;
+    }
+  }
+}
+
+/* FX switched off by the visitor: everything shows at rest, no motion. */
+.fx-off .char,
+.fx-off [data-reveal],
+.fx-off .tagline-enter {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+html.fx-off::view-transition-group(*),
+html.fx-off::view-transition-old(*),
+html.fx-off::view-transition-new(*) {
+  animation: none !important;
+}
 
 /* Cursor preview swaps covers with a short reveal. */
 .preview-in {
@@ -254,6 +274,38 @@ body {
     transparent var(--hole),
     #000 calc(var(--hole) + 28px)
   );
+}
+
+/* Skill matrix blocks: small extruded cubes; rows in the current sentence rise. */
+.cube {
+  background: var(--fg);
+  box-shadow: 2px 2px 0 color-mix(in oklab, var(--fg) 30%, var(--bg));
+}
+.cube-on {
+  background: var(--accent);
+  translate: -2px -2px;
+  box-shadow: 4px 4px 0 color-mix(in oklab, var(--accent) 40%, var(--bg));
+}
+
+/* About route: the line draws itself as the figure scrolls through view. */
+.route-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    html:not(.fx-off) .route-line {
+      stroke-dashoffset: 1;
+      animation: route-draw linear both;
+      animation-timeline: view();
+      animation-range: entry 15% cover 55%;
+    }
+  }
+}
+@keyframes route-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 /* About photo as a CRT: scanlines + vignette + curved glass highlight. */

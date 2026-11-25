@@ -1,5 +1,6 @@
 "use client";
 
+import { isFxOff } from "@/lib/fx";
 import { useEffect, useRef } from "react";
 
 const DURATION = 950;
@@ -70,7 +71,7 @@ export function MeltCanvas({ src, className = "" }: { src: string | null; classN
       if (cancelled) return;
       const prev = current.current;
       current.current = next;
-      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches || isFxOff();
       if (!prev || reduce) {
         drawFull(next);
         return;

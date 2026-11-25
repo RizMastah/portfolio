@@ -24,14 +24,19 @@ test.describe("home", () => {
     await expect(page.getByText(/\d{2}:\d{2}:\d{2} · Nanjing/)).toBeVisible();
   });
 
-  test("copy email button gives feedback", async ({ page, context, browserName }) => {
+  test("hold to connect copies the email", async ({ page, context, browserName }) => {
     test.skip(browserName !== "chromium", "clipboard permission is Chromium-only");
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);
     await page.goto("/");
-    const button = page.getByRole("button", { name: /copy email/i });
+    const button = page.getByRole("button", { name: /hold to connect/i });
     await button.scrollIntoViewIfNeeded();
-    await button.click();
-    await expect(page.getByRole("button", { name: /copied/i })).toBeVisible();
+    // A short click rewinds; holding fills the ring and copies.
+    const box = (await button.boundingBox())!;
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.waitForTimeout(1800);
+    await page.mouse.up();
+    await expect(page.getByRole("button", { name: /connected/i })).toBeVisible();
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
       "raihanaditito@gmail.com",
     );
@@ -211,4 +216,44 @@ test("work page switches between list, index and map views", async ({ page }) =>
   // A project without a case study opens its row in the list view.
   await map.getByRole("button", { name: "TourEase, show details" }).click();
   await expect(page.getByRole("heading", { name: "TourEase" })).toBeVisible();
+});
+
+test("hold to connect also works from the keyboard", async ({ page }) => {
+  await page.goto("/");
+  const button = page.getByRole("button", { name: /hold to connect/i });
+  await button.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("button", { name: /connected/i })).toBeVisible();
+});
+
+test("effects switch turns motion off and is remembered", async ({ page, isMobile }) => {
+  test.skip(isMobile, "status bar is desktop only");
+  await page.goto("/");
+  await page.getByRole("button", { name: /fx on/i }).click();
+  await expect(page.locator("html")).toHaveClass(/fx-off/);
+  await page.reload();
+  await expect(page.locator("html")).toHaveClass(/fx-off/);
+  await expect(page.getByRole("button", { name: /fx off/i })).toBeVisible();
+});
+
+test("home shows the map teaser linking to the map view", async ({ page }) => {
+  await page.goto("/");
+  const teaser = page.getByRole("region", { name: "Project map preview" }).getByRole("link");
+  await expect(teaser).toHaveAttribute("href", "/work#map");
+});
+
+test("skills matrix shows evidence from the projects", async ({ page }) => {
+  await page.goto("/");
+  const skills = page.locator("#skills");
+  await expect(skills.getByRole("rowheader", { name: "PyTorch" })).toBeVisible();
+  await expect(skills.getByText("PyTorch used in Lifty")).toHaveCount(1);
+  await expect(skills.getByText(/one block per use/i)).toBeVisible();
+});
+
+test("about shows the 2+2 route with real distances", async ({ page }) => {
+  await page.goto("/");
+  const route = page.locator("#about figure.route");
+  await expect(route).toBeVisible();
+  await expect(route.getByText(/≈ 4,\d{3} km/).first()).toBeAttached();
+  await expect(route.getByText("Nanjing").first()).toBeAttached();
 });

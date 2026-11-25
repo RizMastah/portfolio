@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { isFxOff } from "@/lib/fx";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { type SpacePoint, projectSpace } from "@/content/projectSpace";
 
@@ -30,7 +31,14 @@ function knnEdges(k = 2) {
  * clusters. Dust particles orbit the points; hovering or focusing a point
  * shows the project. Points are real buttons/links, the canvas is decoration.
  */
-export function ProjectMap({ onShowInList }: { onShowInList: (slug: string) => void }) {
+export function ProjectMap({
+  onShowInList,
+  compact = false,
+}: {
+  onShowInList?: (slug: string) => void;
+  /** Home-page teaser: the whole map is one link to /work#map. */
+  compact?: boolean;
+}) {
   const wrap = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const [active, setActive] = useState<number | null>(null);
@@ -47,7 +55,7 @@ export function ProjectMap({ onShowInList }: { onShowInList: (slug: string) => v
     if (!el || !box) return;
     const ctx = el.getContext("2d");
     if (!ctx) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches || isFxOff();
     const small = window.innerWidth < 768;
 
     // Dust: most particles orbit a project point, the rest drift freely.
@@ -169,6 +177,71 @@ export function ProjectMap({ onShowInList }: { onShowInList: (slug: string) => v
 
   const shown = active === null ? null : points[active];
 
+  if (compact) {
+    // Nearest point to the cursor lights up, so the teaser feels alive.
+    const onMove = (e: React.PointerEvent<HTMLAnchorElement>) => {
+      const r = e.currentTarget.getBoundingClientRect();
+      const mx = (e.clientX - r.left) / r.width;
+      const my = (e.clientY - r.top) / r.height;
+      let best = 0;
+      let bestD = Infinity;
+      points.forEach((p, i) => {
+        const q = pos(p);
+        const d = Math.hypot(q.x - mx, (q.y - my) * (r.height / r.width));
+        if (d < bestD) {
+          bestD = d;
+          best = i;
+        }
+      });
+      setActive(best);
+    };
+    return (
+      <section aria-label="Project map preview">
+        <Link
+          href="/work#map"
+          onPointerMove={onMove}
+          onPointerLeave={() => setActive(null)}
+          className="group border-line bg-bg-raised/40 relative block aspect-[4/3] w-full overflow-hidden rounded-lg border sm:aspect-[16/6]"
+        >
+          <div ref={wrap} className="absolute inset-0">
+            <canvas ref={canvas} aria-hidden className="absolute inset-0 h-full w-full" />
+            {points.map((p, i) => {
+              const { x, y } = pos(p);
+              return (
+                <span
+                  key={p.slug}
+                  aria-hidden
+                  className="absolute -translate-x-1/2 -translate-y-1/2"
+                  style={{ left: `${x * 100}%`, top: `${y * 100}%` }}
+                >
+                  <span
+                    className={`block size-2 rounded-full transition-transform ${
+                      active === i ? "bg-accent scale-150" : "bg-fg"
+                    }`}
+                  />
+                  <span
+                    className={`label absolute top-1/2 hidden -translate-y-1/2 text-[0.625rem] whitespace-nowrap transition-[color,opacity] sm:block ${
+                      x > 0.6 ? "right-3.5" : "left-3.5"
+                    } ${active === i ? "text-accent opacity-100" : "text-muted opacity-70"}`}
+                  >
+                    {p.title}
+                  </span>
+                </span>
+              );
+            })}
+          </div>
+          <p className="label text-muted absolute top-4 left-4 normal-case!">
+            {points.length} projects · PCA of stack &amp; type
+          </p>
+          <p className="display bg-bg/70 group-hover:text-accent absolute bottom-4 left-4 rounded px-2 text-3xl backdrop-blur-sm transition-colors md:text-5xl">
+            Explore the map{" "}
+            <span className="inline-block transition-transform group-hover:translate-x-2">→</span>
+          </p>
+        </Link>
+      </section>
+    );
+  }
+
   return (
     <section aria-label="Project map">
       <div
@@ -223,7 +296,7 @@ export function ProjectMap({ onShowInList }: { onShowInList: (slug: string) => v
                   <button
                     type="button"
                     {...common}
-                    onClick={() => onShowInList(p.slug)}
+                    onClick={() => onShowInList?.(p.slug)}
                     aria-label={`${p.title}, show details`}
                   >
                     {label}

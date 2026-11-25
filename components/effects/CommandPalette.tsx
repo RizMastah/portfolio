@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { profile } from "@/content/profile";
 import { featuredProjects } from "@/content/projects";
+import { isFxOff, setFx } from "@/lib/fx";
 import { THEME_KEY, applyTheme } from "@/lib/theme";
 
 type Command = { id: string; label: string; group: string; hint?: string; run: () => void };
@@ -59,6 +60,13 @@ export default function CommandPalette() {
           applyTheme(next);
           window.dispatchEvent(new Event("rab:theme-change"));
         },
+      },
+      {
+        id: "fx",
+        label: "Turn effects on / off",
+        group: "Do",
+        hint: "motion, hover, cursor",
+        run: () => setFx(isFxOff()),
       },
       {
         id: "sql",
