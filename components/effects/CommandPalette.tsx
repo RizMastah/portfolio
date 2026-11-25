@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { profile } from "@/content/profile";
 import { featuredProjects } from "@/content/projects";
 import { isFxOff, setFx } from "@/lib/fx";
-import { THEME_KEY, applyTheme } from "@/lib/theme";
+import { switchTheme } from "../ThemeSwitch";
 
 type Command = { id: string; label: string; group: string; hint?: string; run: () => void };
 
@@ -52,14 +52,11 @@ export default function CommandPalette() {
         id: "theme",
         label: "Switch light / dark mode",
         group: "Do",
-        run: () => {
-          const next = document.documentElement.dataset.theme === "light" ? "dark" : "light";
-          try {
-            localStorage.setItem(THEME_KEY, next);
-          } catch {}
-          applyTheme(next);
-          window.dispatchEvent(new Event("rab:theme-change"));
-        },
+        run: () =>
+          switchTheme(document.documentElement.dataset.theme === "light" ? "dark" : "light", {
+            x: innerWidth / 2,
+            y: innerHeight / 2,
+          }),
       },
       {
         id: "fx",

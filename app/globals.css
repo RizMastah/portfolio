@@ -192,6 +192,17 @@ html.fx-off::view-transition-new(*) {
   }
 }
 
+/* Theme switch: the new theme spreads from the button as a circle (JS animates
+   the clip-path); only during that transition, so route morphs are untouched. */
+html.theme-vt::view-transition-old(root),
+html.theme-vt::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+html.theme-vt::view-transition-new(root) {
+  z-index: 1;
+}
+
 /* Page transitions: a project cover morphs from its card into the case-study
    header (React <ViewTransition share="morph">); blur hides scaling artefacts. */
 ::view-transition-group(.morph) {

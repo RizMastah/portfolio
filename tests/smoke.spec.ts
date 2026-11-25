@@ -52,14 +52,20 @@ test.describe("home", () => {
         document.querySelector('meta[name="theme-color"]')?.getAttribute("content"),
       );
     expect(await firstThemeColor()).toBe("#0c0f10");
-    const toggle = page.getByRole("button", { name: "Switch to light mode" });
-    await toggle.scrollIntoViewIfNeeded();
-    await toggle.click();
+    // The switch lives in the header, not the footer.
+    const header = page.getByRole("banner");
+    await expect(header.getByRole("radio", { name: "Dark theme" })).toHaveAttribute(
+      "aria-checked",
+      "true",
+    );
+    await header.getByRole("radio", { name: "Light theme" }).click();
     await expect(html).toHaveAttribute("data-theme", "light");
     await page.reload();
     await expect(html).toHaveAttribute("data-theme", "light");
     expect(await firstThemeColor()).toBe("#f4f3ef");
-    await expect(page.getByRole("button", { name: "Switch to dark mode" })).toBeVisible();
+    await expect(
+      page.getByRole("banner").getByRole("radio", { name: "Light theme" }),
+    ).toHaveAttribute("aria-checked", "true");
     expect(await html.getAttribute("data-palette")).toBeNull();
   });
 });

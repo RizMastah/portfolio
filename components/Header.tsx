@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { profile } from "@/content/profile";
 import { container } from "./Section";
 import { StatusBar } from "./StatusBar";
+import { ThemeSwitch } from "./ThemeSwitch";
 
 const nav = [
   { href: "/#work", label: "Work" },
@@ -50,16 +51,17 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 md:gap-2">
+          <ThemeSwitch />
           <a
             href={profile.cvPath}
-            className="label bg-accent text-accent-fg rounded-full px-4 py-2 transition-opacity hover:opacity-85"
+            className="label bg-accent text-accent-fg rounded-full px-3 py-2 transition-opacity hover:opacity-85 md:px-4"
           >
             CV ↓
           </a>
           <button
             type="button"
-            className="label border-line rounded-full border px-4 py-2 md:hidden"
+            className="label border-line rounded-full border px-3 py-2 md:hidden"
             aria-expanded={open}
             aria-controls="mobile-nav"
             onClick={() => setOpen((v) => !v)}

@@ -1,15 +1,11 @@
 import { profile } from "@/content/profile";
 import { container } from "./Section";
-import { ThemeToggle } from "./ThemeToggle";
 import { Year } from "./Year";
 
 export function Footer() {
   return (
     <footer className="border-line border-t py-10">
-      <div className={`${container} grid gap-6`}>
-        <div>
-          <ThemeToggle />
-        </div>
+      <div className={container}>
         <div className="label text-muted flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <p>
             © <Year /> {profile.name}
