@@ -263,3 +263,23 @@ test("about shows the 2+2 route with real distances", async ({ page }) => {
   await expect(route.getByText(/≈ 4,\d{3} km/).first()).toBeAttached();
   await expect(route.getByText("Nanjing").first()).toBeAttached();
 });
+
+test("each skills sentence lights exactly its own blocks", async ({ page }) => {
+  // Expected blocks per sentence (skill × project), same rules as content/skillMatrix.ts.
+  const expected: Record<string, number> = { all: 37, db: 11, ml: 5, llm: 5, java: 4 };
+  await page.goto("/");
+  for (const [id, count] of Object.entries(expected)) {
+    // Put the sentence on the reading line, as a reader scrolling would.
+    await page.evaluate((sid) => {
+      const p = document.querySelector<HTMLElement>(`#skills [data-id="${sid}"]`)!;
+      const fig = document.querySelector<HTMLElement>("#skills figure")!;
+      const phone = innerWidth < 768;
+      const top = phone ? fig.getBoundingClientRect().height + 56 : 0;
+      const line = top + (innerHeight - top) * (phone ? 0.5 : 0.48);
+      const r = p.getBoundingClientRect();
+      window.scrollBy(0, r.top + r.height / 2 - line);
+    }, id);
+    await expect(page.locator(`#skills [data-id="${id}"]`)).toHaveClass(/opacity-100/);
+    await expect(page.locator("#skills .cube-on")).toHaveCount(count);
+  }
+});

@@ -119,9 +119,6 @@ function contours() {
 
 const TOPO = contours();
 const ROUTE = routePath(stops);
-const VERTICAL = routePath(
-  stops.map((_, i) => ({ x: i % 2 ? 0.22 : 0.08, y: 0.06 + (i / (stops.length - 1)) * 0.88 })),
-);
 
 /**
  * The 2+2 journey as a route on a topographic map: a dotted line draws itself
@@ -200,28 +197,20 @@ export function RouteTimeline() {
         })}
       </div>
 
-      {/* Phone: vertical route. */}
-      <div className="relative md:hidden">
-        <svg
-          aria-hidden
-          viewBox={`0 0 ${W} ${H}`}
-          preserveAspectRatio="none"
-          className="absolute inset-y-0 left-0 h-full w-24"
-        >
-          <path
-            d={VERTICAL}
-            pathLength={1}
-            className="route-line"
-            fill="none"
-            stroke="var(--accent)"
-            strokeWidth="6"
-            vectorEffect="non-scaling-stroke"
-          />
-        </svg>
-        <ol className="relative space-y-8 py-14 pr-4 pl-12">
+      {/* Phone: a straight rail through the stop dots; each segment fills on scroll. */}
+      <div className="md:hidden">
+        <ol className="space-y-8 py-14 pr-4 pl-12">
           {stops.map((s, i) => (
             <li key={s.place} className="relative">
-              <span className="bg-bg border-accent absolute top-2 -left-[2.15rem] block size-3.5 rounded-full border-2" />
+              {i < stops.length - 1 ? (
+                <span aria-hidden className="route-rail bg-line">
+                  <span className="route-rail-fill bg-accent" />
+                </span>
+              ) : null}
+              <span
+                aria-hidden
+                className="route-dot bg-bg border-accent absolute top-2 block size-3.5 rounded-full border-2"
+              />
               <p className="label text-accent">{s.when}</p>
               <p className="display text-4xl">{s.place}</p>
               <p className="label text-muted normal-case!">{s.title}</p>

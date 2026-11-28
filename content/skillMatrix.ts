@@ -60,21 +60,37 @@ export const matrixRows: MatrixRow[] = rules
 /** Skills I use but no project here can prove, listed honestly as such. */
 export const unprovenSkills = ["Git", "Docker"];
 
-const rowsOf = (skills: string[]) =>
-  matrixRows.filter((r) => skills.includes(r.skill)).map((r) => r.skill);
+/** Key of one block in the matrix. */
+export const cellKey = (skill: string, slug: string) => `${skill}|${slug}`;
+
+/**
+ * The used blocks in the given rows, optionally only for the given projects.
+ * A sentence lights exactly these blocks, so the highlight never shows more
+ * than the sentence says.
+ */
+function cellsOf(skills: string[], slugs?: string[]) {
+  const out: string[] = [];
+  for (const r of matrixRows) {
+    if (!skills.includes(r.skill)) continue;
+    r.cells.forEach((used, j) => {
+      const slug = matrixProjects[j].slug;
+      if (used && (!slugs || slugs.includes(slug))) out.push(cellKey(r.skill, slug));
+    });
+  }
+  return out;
+}
 const countOf = (skill: string) => matrixRows.find((r) => r.skill === skill)?.count ?? 0;
 const projectsUsing = (skills: string[]) =>
   matrixProjects.filter((_, j) => matrixRows.some((r) => skills.includes(r.skill) && r.cells[j]));
 
 const blocks = matrixRows.reduce((n, r) => n + r.count, 0);
-const dbSkills = ["SQL", "PostgreSQL", "MySQL", "Data modeling", "Prisma", "Firebase"];
-const mlSkills = ["Python", "PyTorch", "Core ML", "Apple Vision"];
+const onDevice = projectsUsing(["PyTorch", "Core ML"]);
 
 /**
  * The story beside the matrix. Every number is computed from the rows above;
- * `rows` is what lights up while that sentence is being read.
+ * `cells` are exactly the blocks that sentence talks about.
  */
-export const matrixStory: { id: string; parts: (string | { n: string })[]; rows: string[] }[] = [
+export const matrixStory: { id: string; parts: (string | { n: string })[]; cells: string[] }[] = [
   {
     id: "all",
     parts: [
@@ -85,7 +101,7 @@ export const matrixStory: { id: string; parts: (string | { n: string })[]; rows:
       { n: String(blocks) },
       " blocks. Each block is one skill used in one project.",
     ],
-    rows: matrixRows.map((r) => r.skill),
+    cells: cellsOf(matrixRows.map((r) => r.skill)),
   },
   {
     id: "db",
@@ -96,20 +112,19 @@ export const matrixStory: { id: string; parts: (string | { n: string })[]; rows:
       { n: String(countOf("Data modeling")) },
       ".",
     ],
-    rows: rowsOf(dbSkills),
+    cells: cellsOf(["SQL", "Data modeling"]),
   },
   {
     id: "ml",
     parts: [
       "Machine learning runs on-device: PyTorch, Core ML and Apple Vision power ",
-      {
-        n: projectsUsing(["PyTorch", "Core ML"])
-          .map((p) => p.title)
-          .join(" and "),
-      },
+      { n: onDevice.map((p) => p.title).join(" and ") },
       ".",
     ],
-    rows: rowsOf(mlSkills),
+    cells: cellsOf(
+      ["PyTorch", "Core ML", "Apple Vision"],
+      onDevice.map((p) => p.slug),
+    ),
   },
   {
     id: "llm",
@@ -118,7 +133,7 @@ export const matrixStory: { id: string; parts: (string | { n: string })[]; rows:
       { n: String(countOf("LLM APIs")) },
       " projects; KawalBijak pairs them with statistical anomaly detection.",
     ],
-    rows: rowsOf(["LLM APIs", "Anomaly detection"]),
+    cells: [...cellsOf(["LLM APIs"]), ...cellsOf(["Anomaly detection"], ["kawalbijak"])],
   },
   {
     id: "java",
@@ -127,6 +142,6 @@ export const matrixStory: { id: string; parts: (string | { n: string })[]; rows:
       { n: "Spring Boot" },
       " for NexaOrder.",
     ],
-    rows: rowsOf(["Java", "Spring Boot"]),
+    cells: [...cellsOf(["Java"]), ...cellsOf(["Spring Boot"], ["nexaorder"])],
   },
 ];
