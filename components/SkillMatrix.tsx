@@ -29,7 +29,8 @@ export function SkillMatrix() {
       const fig = figure.current?.getBoundingClientRect();
       const phone = window.innerWidth < 768;
       const top = phone && fig ? Math.max(0, fig.bottom) : 0;
-      const line = top + (window.innerHeight - top) * (phone ? 0.5 : 0.48);
+      // Phones: read high in the space under the matrix, close to it.
+      const line = top + (window.innerHeight - top) * (phone ? 0.38 : 0.48);
       let best = matrixStory[0].id;
       let bestD = Infinity;
       sentences.current.forEach((el, i) => {
@@ -67,11 +68,12 @@ export function SkillMatrix() {
       {/* Matrix: sticky under the header on phones, beside the story on desktop. */}
       <figure
         ref={figure}
-        className="bg-bg sticky top-14 z-10 -mx-4 px-4 pt-2 pb-3 md:top-28 md:order-2 md:col-span-7 md:mx-0 md:self-start md:bg-transparent md:p-0"
+        className="bg-bg after:from-bg sticky top-14 z-10 -mx-4 px-4 pt-2 pb-1 after:pointer-events-none after:absolute after:inset-x-0 after:top-full after:h-12 after:bg-gradient-to-b after:to-transparent md:top-28 md:order-2 md:col-span-7 md:mx-0 md:self-start md:bg-transparent md:p-0 md:after:hidden"
       >
-        <figcaption className="label text-muted mb-2 md:mb-4">
-          Fig. 04 — {matrixProjects.length} projects × {matrixRows.length} skills, one block per use
-          ({blocks})
+        <figcaption className="label text-muted mb-1 text-[0.6rem] md:mb-4 md:text-xs">
+          Fig. 04 — {matrixProjects.length} projects × {matrixRows.length} skills
+          <span className="hidden md:inline">, one block per use</span> ({blocks}
+          <span className="md:hidden"> blocks</span>)
         </figcaption>
         <div className="overflow-x-auto">
           <table className="border-separate border-spacing-[2px] md:border-spacing-[3px]">
@@ -81,9 +83,9 @@ export function SkillMatrix() {
                   Skill
                 </th>
                 {matrixProjects.map((p) => (
-                  <th key={p.slug} scope="col" className="h-20 w-4 align-bottom md:h-28 md:w-5">
+                  <th key={p.slug} scope="col" className="h-14 w-3.5 align-bottom md:h-28 md:w-5">
                     <span
-                      className={`label block w-4 origin-bottom-left translate-x-2.5 -rotate-60 text-left text-[0.6rem] whitespace-nowrap normal-case! transition-colors md:w-5 md:translate-x-3 md:text-xs ${
+                      className={`label block w-3.5 origin-bottom-left translate-x-2 -rotate-60 text-left text-[0.5rem] whitespace-nowrap normal-case! transition-colors md:w-5 md:translate-x-3 md:text-xs ${
                         litProject(p.slug) ? "text-accent" : "text-muted"
                       }`}
                     >
@@ -111,7 +113,7 @@ export function SkillMatrix() {
                   <tr key={r.skill}>
                     <th
                       scope="row"
-                      className={`label pr-2 text-right text-[0.6rem] font-normal whitespace-nowrap normal-case! transition-colors md:pr-3 md:text-xs ${
+                      className={`label pr-2 text-right text-[0.55rem] leading-none font-normal whitespace-nowrap normal-case! transition-colors md:pr-3 md:text-xs ${
                         rowLit ? "text-fg" : "text-muted"
                       }`}
                     >
@@ -125,7 +127,7 @@ export function SkillMatrix() {
                           {used ? (
                             <span
                               title={`${r.skill} × ${p.title}`}
-                              className={`cube block size-4 rounded-[3px] transition-[background-color,translate,box-shadow,opacity] duration-300 md:size-5 ${
+                              className={`cube block size-3.5 rounded-[2px] transition-[background-color,translate,box-shadow,opacity] duration-300 md:size-5 md:rounded-[3px] ${
                                 on ? "cube-on" : "opacity-30"
                               }`}
                             >
@@ -143,7 +145,7 @@ export function SkillMatrix() {
                       );
                     })}
                     <td
-                      className={`label pl-2 text-[0.6rem] tabular-nums transition-colors md:pl-3 md:text-xs ${
+                      className={`label pl-2 text-[0.55rem] tabular-nums transition-colors md:pl-3 md:text-xs ${
                         rowLit ? "text-accent" : "text-muted"
                       }`}
                     >
@@ -167,7 +169,7 @@ export function SkillMatrix() {
               data-id={s.id}
               ref={(el) => void (sentences.current[i] = el)}
               onPointerMove={(e) => e.pointerType === "mouse" && setActive(s.id)}
-              className={`flex min-h-[38svh] items-center text-2xl leading-snug transition-opacity duration-500 md:min-h-[42vh] md:text-3xl ${
+              className={`flex min-h-[30svh] items-center text-xl leading-snug transition-opacity duration-500 md:min-h-[42vh] md:text-3xl ${
                 on ? "opacity-100" : "opacity-30"
               }`}
             >

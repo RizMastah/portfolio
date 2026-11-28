@@ -253,7 +253,7 @@ test("skills matrix shows evidence from the projects", async ({ page }) => {
   const skills = page.locator("#skills");
   await expect(skills.getByRole("rowheader", { name: "PyTorch" })).toBeVisible();
   await expect(skills.getByText("PyTorch used in Lifty")).toHaveCount(1);
-  await expect(skills.getByText(/one block per use/i)).toBeVisible();
+  await expect(skills.getByText(/Fig. 04/)).toBeVisible();
 });
 
 test("about shows the 2+2 route with real distances", async ({ page }) => {
@@ -275,7 +275,7 @@ test("each skills sentence lights exactly its own blocks", async ({ page }) => {
       const fig = document.querySelector<HTMLElement>("#skills figure")!;
       const phone = innerWidth < 768;
       const top = phone ? fig.getBoundingClientRect().height + 56 : 0;
-      const line = top + (innerHeight - top) * (phone ? 0.5 : 0.48);
+      const line = top + (innerHeight - top) * (phone ? 0.38 : 0.48);
       const r = p.getBoundingClientRect();
       window.scrollBy(0, r.top + r.height / 2 - line);
     }, id);
